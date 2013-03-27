@@ -28,8 +28,7 @@ var Chord = function( notes, descriptor, tonic, relative, type ) {
     
     
     // if the chord is abstract, it has no tonic.
-    if( tonic ) this.abstract = false;
-    else        this.abstract = true;
+    this.abstr = (tonic ? false : true);
     
     // if the chord is relative, it can be positioned anywhere
     // on the musical axis
@@ -171,7 +170,7 @@ Chord.contains = function(chord, note){
  * get the chord in proper notation
  * 
  * these are examples of proper notations:
- * C - an abstract C chord
+ * C - an relative C chord
  * C# - a C sharp chord
  * B♭6 - A Bb7 chord
  * Cmin7 - A cminor chord
@@ -181,7 +180,7 @@ Chord.contains = function(chord, note){
  * @returns {string} - the chord notation as it is most commonly used
  */
 Chord.prototype.notation = function( signature ) {
-    if( this.abstract ){
+    if( this.abstr ){
         return this.names[0].replace("b","♭").replace("#","♯");;
     } else {
         return this.tonic.simpleNotation( signature ) + this.names[0].replace("b","♭").replace("#","♯");;
@@ -194,7 +193,7 @@ Chord.prototype.notation = function( signature ) {
  * @param {integer} signature - the signature of the note
  */
 Chord.prototype.longNotation = function( signature ) {
-    if( this.abstract ){
+    if( this.abstr ){
         return this.longName.replace("b","♭").replace("#","♯");;
     } else {
         return this.tonic.simpleNotation( signature ) + " " + this.longName.replace("b","♭").replace("#","♯");;

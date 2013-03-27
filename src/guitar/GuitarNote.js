@@ -57,7 +57,6 @@ GuitarNote.prototype.notation = function(){
  * 
  * @returns {string} the Chord notation
  */
-GuitarNote.prototype.short = 
 GuitarNote.prototype.simple = function( signature ){
     return this.note.simpleNotation( signature );
 };
