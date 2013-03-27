@@ -5,7 +5,7 @@
   "description": "A Javascript library for note and music analysis",
   
   "dependencies": {
-    "jsdoc": ">=3.1.x",
+    "jsdoc": ">=3.2.0-dev",
     "node-static":">=0.6.7",
     "node-minify":">=0.7.2"
   },
