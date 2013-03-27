@@ -22,8 +22,36 @@ Getting Started
 
 Take a look at the MUSIQ.js primer. 
 
+Testing
+-------
+
+There is a QUnit test suite included in this release. Start the simple static file server as so:
+
+    node ./server.js
+    
+And then navigate to the URL:
+
+    http://musiqjs-server/test/qunit.html
+    
+You can add new tests as well.
+
+API documentation
+-----------------
+
+Musiq.js uses jsdoc to create it's API documentation with a custom template that lives in
+./jsdoc-template/. You can build the documentation again by running the following command
+(provided you have jsdoc npm module installed):
+
+    ./node_modules/jsdoc/jsdoc -r src/ -d docs/ -t jsdoc-template
+    
+Or simply run the provided shell script:
+
+    ./doc
+    
+
+
 Instruments supported
 ---------------------
 
-So far the only instrument that is supported is the Guitar. I'm planning to support
-at least the Piano as well. 
+So far the only instrument that is supported is the guitar. There are plans to support
+at least the piano as well. Empty files for this can be found in the src/piano/ folder.

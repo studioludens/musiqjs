@@ -1,0 +1,28 @@
+{
+  "name": "musiqjs",
+  "version": "0.1.0",
+  "author":"Alexander Rulkens <info@studioludens.com>",
+  "description": "A Javascript library for note and music analysis",
+  
+  "dependencies": {
+    "jsdoc": ">=3.2.0",
+    "node-static":">=0.6.7"
+  },
+  
+  "scripts": {
+    "start": "node server.js",
+    "predeploy": "echo Deploying MUSIQ.js test suite",
+    "postdeploy": "echo Deployment of MUSIQ.js test suite finished"
+  },
+  
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/studioludens/musiqjs.git"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  },
+  
+  "license":"MIT"
+}

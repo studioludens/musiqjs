@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MUSIQ.js API Reference: Class: GuitarChord</title>
+    
+    <script src="scripts/jquery-1.9.1.min.js"></script>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" media="screen" href="../style/bootstrap.min.css">
+    <!-- responsive sheets -->
+    <link href="../style/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="../style/docs.css" rel="stylesheet">
+    
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/custom.css">
+    
+    
+          
+    <script>
+        $(document).ready(function(w){
+            
+            // toggle handlers for the data titles
+            $('dt.doc-header').click(function(){
+                //alert("It works");
+                $(this).next('dd').toggle(100);
+                //$(this).toggle();
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/#">MUSIQ Lab</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="/#">Home</a></li>
+              <li class="active">
+                <a href="/musiq.html" class="dropdown" data-toggle="dropdown">MUSIQ.js</a>
+                <ul class="dropdown-menu">
+                    <li><a href="/musiqjs-tutorial.html">Tutorial</a></li>
+                    <li class="active"><a href="/docs/index.html">API Documentation</a></li>
+                    <li><a href="http://github.com/studioludens/musiqjs/">Source Code</a></li>
+                </ul>
+              </li>
+              <li><a href="/guitar.html">Interactive Guitar</a></li>
+              <li><a href="/#about">About</a></li>
+              <li><a href="/#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="row">
+            <div class="span3 bs-docs-sidebar">
+                    <ul class="nav nav-list bs-docs-sidenav affix"><li class="active"><a href="index.html"><i class="icon-chevron-right"></i>Index</a></li><li class="nav-header">Classes</li><li><a href="Chord.html"><i class="icon-chevron-right"></i>Chord</a></li><li><a href="Chords.html"><i class="icon-chevron-right"></i>Chords</a></li><li><a href="Guitar.html"><i class="icon-chevron-right"></i>Guitar</a></li><li><a href="GuitarChord.html"><i class="icon-chevron-right"></i>GuitarChord</a></li><li><a href="GuitarFret.html"><i class="icon-chevron-right"></i>GuitarFret</a></li><li><a href="GuitarNote.html"><i class="icon-chevron-right"></i>GuitarNote</a></li><li><a href="GuitarString.html"><i class="icon-chevron-right"></i>GuitarString</a></li><li><a href="Interval.html"><i class="icon-chevron-right"></i>Interval</a></li><li><a href="Note.html"><i class="icon-chevron-right"></i>Note</a></li><li><a href="Scale.html"><i class="icon-chevron-right"></i>Scale</a></li><li class="nav-header">Namespaces</li><li><a href="MUSIQ.html"><i class="icon-chevron-right"></i>MUSIQ</a></li><li class="nav-header">Globals</li><li><a href="global.html#chord"><i class="icon-chevron-right"></i>chord</a></li><li><a href="global.html#interval"><i class="icon-chevron-right"></i>interval</a></li><li><a href="global.html#note"><i class="icon-chevron-right"></i>note</a></li></ul>
+            </div>
+            <div class="span9">
+                <div class="page-header">
+                    <h1 class="page-title">Class: GuitarChord</h1>
+                </div>
+                
+
+
+
+<section>
+    
+<header>
+    <h2>
+    GuitarChord
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt class="doc-header doc-method">
+    <h4 class="name" id="GuitarChord"><span class="type-signature"></span>new GuitarChord<span class="signature">(<span class="type-signature"><a href="Guitar.html">Guitar</a></span> guitar, <span class="type-signature"><a href="Chord.html">Chord</a></span> chord, <span class="type-signature">array</span> notes)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-method-content">
+    
+    
+    <div class="description">
+        GuitarChord - a class for representing a guitar chord
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>guitar</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Guitar.html">Guitar</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a Guitar object on which this chord is played</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>chord</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Chord.html">Chord</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a Chord object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>notes</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a collection of GuitarNote objects (optional)</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 13
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt class="doc-header doc-member">
+    <h4 class="name" id="MAX_STRETCH"><span class="type-signature">&lt;static> </span>MAX_STRETCH<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-member-content">
+    
+    <div class="description">
+        maximum finger stretch
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 55
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt class="doc-header doc-member">
+    <h4 class="name" id="ease"><span class="type-signature">&lt;inner> </span>ease<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-member-content">
+    
+    <div class="description">
+        how easy it is to play the chord.
+
+these factors add weight:
+- each note played
+  + 1 for each note played
+- the distance of each note relative to the previous note
+  + 1 for each extra fret distance between two notes
+- the distance of the note to the base note
+- the number of fingers used
+  + 1 for each finger used, + 100 if more than all fingers are used (impossible)
+
+lower is better, no note has ease 0,
+1 note at least ease 1
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 36
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt class="doc-header doc-member">
+    <h4 class="name" id="fingersUsed"><span class="type-signature">&lt;inner> </span>fingersUsed<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-member-content">
+    
+    <div class="description">
+        five fingers that we can use
+
+In case you're Django, please remove the last three
+items from the list 
+0 : thumb
+1 : index
+2 : middle
+3 : ring
+4 : pinky
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 49
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt class="doc-header doc-method">
+    <h4 class="name" id="fromChord"><span class="type-signature">&lt;static> </span>fromChord<span class="signature">(<span class="type-signature"><a href="Guitar.html">Guitar</a></span> guitar, <span class="type-signature"><a href="Chord.html">Chord</a></span> chord)</span><span class="type-signature"> &rarr; <a href="GuitarChord.html">GuitarChord</a></span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-method-content">
+    
+    
+    <div class="description">
+        finds all variations of a particular chord on the guitar neck
+
+the chord should be relative
+- find the tonic on each fret
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>guitar</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Guitar.html">Guitar</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">A Guitar object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>chord</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Chord.html">Chord</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">A chord object</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 250
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="GuitarChord.html">GuitarChord</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt class="doc-header doc-method">
+    <h4 class="name" id="fromChordAndBase"><span class="type-signature">&lt;static> </span>fromChordAndBase<span class="signature">(<span class="type-signature"><a href="Guitar.html">Guitar</a></span> guitar, <span class="type-signature"><a href="Chord.html">Chord</a></span> chord, <span class="type-signature"><a href="GuitarNote.html">GuitarNote</a></span> base, <span class="type-signature">object</span> options)</span><span class="type-signature"> &rarr; array</span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-method-content">
+    
+    
+    <div class="description">
+        finds all variations of a particular chord with a specific
+tonic. All these
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>guitar</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Guitar.html">Guitar</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the guitar object (with specific tuning)</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>chord</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Chord.html">Chord</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the Chord object to find specific GuitarChords for</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>base</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="GuitarNote.html">GuitarNote</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the Base note we want to base the chord on (GuitarNote)</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">an object specifying more options:
+                 
+                     upPreference: false
+                     maxFingerStretch: 2
+                     maxDifficulty: 10</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 74
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    an array of GuitarChord objects
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">array</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt class="doc-header doc-method">
+    <h4 class="name" id="barre"><span class="type-signature"></span>barre<span class="signature">()</span><span class="type-signature"> &rarr; integer</span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-method-content">
+    
+    
+    <div class="description">
+        barre -
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 304
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>test function</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    how many fingers can be played barre. Calculated from the
+                     top string
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">integer</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt class="doc-header doc-method">
+    <h4 class="name" id="valid"><span class="type-signature"></span>valid<span class="signature">()</span><span class="type-signature"> &rarr; boolean</span></h4>
+    
+    
+</dt>
+<dd class="doc-content doc-method-content">
+    
+    
+    <div class="description">
+        check if a guitar chord is valid
+this is when all notes can be matched
+with a note in the chord object.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GuitarChord.js.html">guitar/GuitarChord.js</a>, line 292
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>implement function</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    - true if the chord is valid
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">boolean</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+            </div>
+        </div>
+        
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Mar 27 2013 10:13:27 GMT-0400 (EDT)
+        </footer>
+    </div>
+
+
+
+<script> prettyPrint(); </script>
+<script src="../script/lib/bootstrap/bootstrap.min.js"></script>
+</body>
+</html>

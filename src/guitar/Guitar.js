@@ -1,8 +1,22 @@
-// guitar class
-// abstracts a guitar
-
+'use strict';
+/**
+ * Guitar object
+ * 
+ * 
+ * @constructor
+ * 
+ * @param {string}  [tuning=standard] - initializes the guitar object with a tuning
+ *                  defaults to "standard" guitar tuning
+ *                  E A D G B E
+ *                  
+ * 
+ * You can find more tunings in MUSIQ.tunings
+ * 
+ */
 var Guitar = function( tuning ){
     
+    // strings get initialized when a tuning is set
+    this.strings = [];
     
     // the strings property of the guitar object is
     // automatically set when the tuning is set
@@ -19,12 +33,19 @@ var Guitar = function( tuning ){
         this.frets[i] = new GuitarFret( this, i );
     }
     
+    
+    
     this.createNotes();
     
     
     //console.log( this );
 };
 
+/**
+ * An object array with a number of different guitar tunings.
+ * @todo add more tunings
+ * 
+ */
 Guitar.tunings = {
     "standard" : {
         "name"    : "Standard",
@@ -37,11 +58,25 @@ Guitar.tunings = {
     "open g"   : {
         "name"    : "Open G",
         "notes" : [ 38, 43, 50, 55, 59, 62 ]
+    },
+    "fourths"   : {
+        "name"    : "All Fourths",
+        "notes" : [ 40, 45, 50, 55, 60, 65 ]
+    },
+    "ukelele"   : {
+        "name"    : "Ukelele Standard",
+        "notes" : [ 67, 60, 64, 69 ]
     }
 };
 
+/**
+ * the number of frets shown in any visual representation (default value = 16 )
+ */
 Guitar.FRETS_SHOWN = 16;
 
+/**
+ * @private
+ */
 Guitar.prototype.createNotes = function(){
     
     // create an matrix of notes:
@@ -60,7 +95,9 @@ Guitar.prototype.createNotes = function(){
 }
 /**
  * sets or gets the tuning for this guitar
- * @param name : a string representing the type of tuning (default: "standard")
+ * @param {string} name - representing the type of tuning (default: "standard")
+ * 
+ * @returns {Guitar} this object
  */
 Guitar.prototype.tuning = function( name ){
     
@@ -95,35 +132,66 @@ Guitar.prototype.tuning = function( name ){
 /**
  * returns a list of chords based on the finger positions for the 
  * individual strings
- * @param positions : the finger positions on the individual strings
- * @returns an array of chords that match this fingering position
+ * @param {array} positions - the finger positions on the individual strings
+ * @returns {Chord[]} an array of chords that match this fingering position
  * 
  */
 Guitar.prototype.chordsFromFingerPos = function( positions ){
-    
-    var notes = this.notesFromFingerPos( positions );
-    
-    return Chord.fromNotes( notes );
-    
+    return Chords.fromNotes( this.notesFromFingerPos( positions ) );
 };
 
 /**
- * returns a Chord object from the active notes played on the guitar
+ * returns one chord based on the finger positions for the 
+ * individual strings
+ * 
+ * @param {integer[]} positions - the finger positions on the individual strings
+ *                                -1 represents 
+ * @returns {Chord} a chord object that matches this fingering position. If no 
+ *                                chord is found, null is returned. 
+ * 
+ * 
+ */
+Guitar.prototype.chordFromFingerPos = function( positions ){
+    return Chord.fromNotes( this.notesFromFingerPos( positions ) );
+};
+
+/**
+ * @returns {array} an array of Chord objects from the active notes played on the guitar
  */
 Guitar.prototype.chordsFromActiveNotes = function(){
     var notes = _(this.activeNotes()).map(function(note){
             return note.notePos();
         });
     
-    console.log(notes);
+    //console.log(notes);
     return Chord.fromNotes( notes );
 };
 
+/**
+ * @returns {Note[]|Chord[]} a match array with Note objects that
+ * match this finger position
+ */
+Guitar.prototype.activeMatches = function(){
+    // get all notes
+    var notes = _(this.activeNotes()).map(function(note){
+            return note.notePos();
+        });
+    
+    
+    var matchedChords = Chords.fromNotes( notes );
+    if( !matchedChords ){
+        // just return the individual notes as an array
+        return _(this.activeNotes()).map(function(note){
+            return note.note; // because it's a GuitarNote
+        });
+    }
+    return matchedChords;
+}
 
 
 
 /**
- * returns an array of GuitarNote objects representing
+ * @returns {GuitarNote[]} of GuitarNote objects representing
  * all the active notes on the guitar neck
  */
 Guitar.prototype.activeNotes = function(){
@@ -141,7 +209,7 @@ Guitar.prototype.activeNotes = function(){
 };
 
 /**
- * @returns a list of Note objects 
+ * @returns {integer[]} a list of integers representing the MIDI notes for all finger positions 
  */
 Guitar.prototype.notesFromFingerPos = function( positions ){
     
@@ -162,7 +230,9 @@ Guitar.prototype.notesFromFingerPos = function( positions ){
 
 /**
  * get all possible fingering positions from a chord
- * @returns an array with all possible fingerings
+ * @returns {array} an array with all possible fingerings
+ * 
+ * @todo implement this method
  */
 Guitar.prototype.posFromChord = function( chord ){
     
@@ -170,7 +240,9 @@ Guitar.prototype.posFromChord = function( chord ){
 
 /**
  * get all notes on a particular fret
- * @param fretNr : the number of the fret to look for
+ * @param {integer} fretNr - the number of the fret to look for
+ * 
+ * @returns {GuitarNote[]} an array of GuitarNote objects
  */
 Guitar.prototype.notesOnFret = function( fretNr ){
     return _(this.strings).map( function( str, str_nr ){
@@ -179,9 +251,30 @@ Guitar.prototype.notesOnFret = function( fretNr ){
 };
 
 /**
- * @returns the notation for a position on the fretboard
- * @param str : the string selected (int)
- * @param fret : the selected fret (int)
+ * get all notes on a particular string
+ * @param {integer} stringNr - the the number of the string to look for
+ * 
+ * @returns {GuitarNote[]} an array of GuitarNote objects
+ */
+Guitar.prototype.notesOnString = function( stringNr ){
+    return this.notes[stringNr];
+};
+
+/**
+ * get the note on a specific position on the fretboard
+ * @param {integer[]} pos - an array like [ string, fret ]
+ * 
+ * @returns {GuitarNote}
+ */
+Guitar.prototype.noteOnPos = function( pos ){
+    return this.notes[ pos[0] ][ pos[1] ];
+};
+
+/**
+ * get the notation for a note on the specified string and fret
+ * @returns {string} the notation for a position on the fretboard
+ * @param {integer} str - the string selected (int)
+ * @param {integer} fret - the selected fret (int)
  */
 Guitar.prototype.notationFor = function( str, fret ){
     return this.notes[str][fret].note.simpleNotation();
@@ -190,7 +283,9 @@ Guitar.prototype.notationFor = function( str, fret ){
 
 /**
  * transpose notes on the fretboard
- * @param num : the number of frets to transpose (negative is down, positive is up)
+ * @param {integer} num - the number of frets to transpose (negative is down, positive is up)
+ * 
+ * @returns {Guitar} the Guitar object
  * 
  * we implement this by transposing the state objects of all the notes only
  */
@@ -220,49 +315,48 @@ Guitar.prototype.transpose = function( num ){
                 
         });
     });
+    
+    return this;
 };
 
 
 /**
  * show function: shows chords, notes or scales on the fretboard
  * 
- * @str : the input string
+ * @param matches {array} - an array of Chord / Note / Scale objects to be shown
  * 
- * @return : true if the query is valid and the fretboard has changed
+ * @return {Guitar} - the Guitar object
  * 
  */
  
-Guitar.prototype.show = function( str ){
+Guitar.prototype.show = function( matches ){
     
-    if( !str ) return;
+    if( !matches ) return this;
     
     // clear fretboard
     this.clearFretboard();
     
-    if( MUSIQ.isValidNote( str )){
-        console.log("Showing single note");
-       this.showNotes( [str] ); 
-    } else if( MUSIQ.isValidNoteList( str ) ){
-        console.log("Showing multiple notes");
-        var noteList = Note.fromNotation( str );
-        this.showNotes( noteList );
-    } else if( MUSIQ.isValidChord( str )){
-        console.log("Showing single chord");
-        var chord = Chord.fromNotation( str );
-        this.showChords( [chord]);
-    } else if( MUSIQ.isValidScale( str )){
-        console.log("Showing single scale");
-        var scale = Scale.fromNotation( str );
-        this.showScales( [chord]);
-    } else {
-        // cannot be parsed!
-        console.warn("String cannot be shown: " + str);
+    /**
+     * show the first match bright, the second and later
+     * matched slightly faded (ghosted) and the notes matched
+     * as tonic
+     */
+    _(matches).each(function(match, num){
         
-        // function failed to show anything
-        return false;
-    }
+        console.log(num);
+        // options
+        var o = { only: true, active: true, ghosted: num > 0 };
+        
+        if( match.type() == 'note'){
+            this.showNotes( [match], o);
+            o.tonic = true;
+        } else if( match.type() == 'chord' || match.type() == 'scale' ){
+            this.showChords( [match], o );
+        } 
+        
+    },this);
     
-    return true;
+    return this;
     
 };
 
@@ -270,22 +364,26 @@ Guitar.prototype.show = function( str ){
  * show all the notes on the fretboard that match a
  * particular array of basic notes
  * 
- * @param notes : array with notes
- * @param options : object describing some formatting options:
+ * @param notes {array} - array with notes
+ * @param options {object} - object describing some formatting options:
  * 
- *      {   only: boolean,
+ *         only: boolean,
  *          active: boolean,
  *          ghosted: boolean,
  *          tonic: boolean
- *      }
+ *  
+ * @returns {Guitar} the Guitar object
  * 
  */
 Guitar.prototype.showNotes = function( notes, options ){
     
+    console.log( "ShowNotes ");
+    //console.log( notes )
+    
     // set the default options
     var opts = options || { only : true, active: true };
     
-    console.log( notes );
+    //console.log( notes );
     // convert it to an array of note objects
     
     // TODO: probably solve this with reduce
@@ -295,7 +393,7 @@ Guitar.prototype.showNotes = function( notes, options ){
             // check if N is a number
             } else if( _(n).isNumber() ){
                 
-                console.log("Note is number : " + n);
+                //console.log("Note is number : " + n);
                 
                 // relative
                 if( n < 12 ){
@@ -307,7 +405,7 @@ Guitar.prototype.showNotes = function( notes, options ){
             // check if N is a string
             } else if( _(n).isString() ){
                 // convert it to a note
-                console.log("Note is string : " + n);
+                //console.log("Note is string : " + n);
                 return Note.fromNotation(n);
             }
             // no match
@@ -317,7 +415,7 @@ Guitar.prototype.showNotes = function( notes, options ){
             return;
         });
     
-    //console.log( noteObjects );
+    console.log( noteObjects );
     
     _(this.notes).each(function(string_notes){
         _(string_notes).each(function(note){
@@ -354,12 +452,24 @@ Guitar.prototype.showNotes = function( notes, options ){
             if( opts.ghosted ) note.ghosted( noteFound );
         });
     });
+    
+    return this;
 };
 
 /**
  * show all the notes of a list of chords on the fretboard
+ * 
+ * @param {array} - array of Chord objects
+ * 
+ * @returns {Guitar} the Guitar object
+ * @todo: implement so we can show multiple chords. Now, it will only show the
+ * first chord in the array
+ * 
  */
 Guitar.prototype.showChords = function( chords ){
+    
+    console.log( "ShowChords ");
+    console.log( chords );
     
     // get a list of notes - only from the first chord
     if( chords && chords.length > 0){
@@ -369,31 +479,40 @@ Guitar.prototype.showChords = function( chords ){
         this.showTonic( chords[0].tonic );
     }
     
-    
+    return this;
 };
 
 /**
  * show all notes of a particular scale on the fretboard
+ * 
+ * @param scales {array} - of Scale objects
+ * @returns {Guitar} the Guitar object
+ * 
+ * @todo implement function
  */
 Guitar.prototype.showScales = function( scales ){
     console.log("Function showScales not implemented!");
+    return this;
 };
 
 /**
  * show the tonic notes on the fret board as well
- * @param note : a Note object representing the current tonic
+ * @param note {Note} - a Note object representing the current tonic
+ * 
+ * @returns {Guitar} the Guitar object
  */
 Guitar.prototype.showTonic = function( note ){
     console.log("Showing tonic");
     console.log( note );
     
-    this.showNotes( [note], { tonic: true });
+    return this.showNotes( [note], { only: false, tonic: true });
 };
 
 /**
  * show the notes on the fretboard
- * @param frets : an array of integers representing which note to show
+ * @param frets {array} - an array of integers representing which note to show
  *                on what string
+ * @returns {Guitar} the Guitar object
  */
 Guitar.prototype.showFrets = function( frets ){
    
@@ -403,10 +522,14 @@ Guitar.prototype.showFrets = function( frets ){
        };
    });
    
+   return this;
+   
 };
 
 /**
  * clear all active or ghosted notes from the fretboard
+ * 
+ * @returns {Guitar} the Guitar object
  */
 Guitar.prototype.clearFretboard = function(){
     
@@ -415,5 +538,7 @@ Guitar.prototype.clearFretboard = function(){
             note.state = { active: false, ghosted: false, root: false };
         });
     });
+    
+    return this;
     
 };

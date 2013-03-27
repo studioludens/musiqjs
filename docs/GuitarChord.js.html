@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MUSIQ.js API Reference: Source: guitar/GuitarChord.js</title>
+    
+    <script src="scripts/jquery-1.9.1.min.js"></script>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" media="screen" href="../style/bootstrap.min.css">
+    <!-- responsive sheets -->
+    <link href="../style/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="../style/docs.css" rel="stylesheet">
+    
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/custom.css">
+    
+    
+          
+    <script>
+        $(document).ready(function(w){
+            
+            // toggle handlers for the data titles
+            $('dt.doc-header').click(function(){
+                //alert("It works");
+                $(this).next('dd').toggle(100);
+                //$(this).toggle();
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/#">MUSIQ Lab</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="/#">Home</a></li>
+              <li class="active">
+                <a href="/musiq.html" class="dropdown" data-toggle="dropdown">MUSIQ.js</a>
+                <ul class="dropdown-menu">
+                    <li><a href="/musiqjs-tutorial.html">Tutorial</a></li>
+                    <li class="active"><a href="/docs/index.html">API Documentation</a></li>
+                    <li><a href="http://github.com/studioludens/musiqjs/">Source Code</a></li>
+                </ul>
+              </li>
+              <li><a href="/guitar.html">Interactive Guitar</a></li>
+              <li><a href="/#about">About</a></li>
+              <li><a href="/#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="row">
+            <div class="span3 bs-docs-sidebar">
+                    <ul class="nav nav-list bs-docs-sidenav affix"><li class="active"><a href="index.html"><i class="icon-chevron-right"></i>Index</a></li><li class="nav-header">Classes</li><li><a href="Chord.html"><i class="icon-chevron-right"></i>Chord</a></li><li><a href="Chords.html"><i class="icon-chevron-right"></i>Chords</a></li><li><a href="Guitar.html"><i class="icon-chevron-right"></i>Guitar</a></li><li><a href="GuitarChord.html"><i class="icon-chevron-right"></i>GuitarChord</a></li><li><a href="GuitarFret.html"><i class="icon-chevron-right"></i>GuitarFret</a></li><li><a href="GuitarNote.html"><i class="icon-chevron-right"></i>GuitarNote</a></li><li><a href="GuitarString.html"><i class="icon-chevron-right"></i>GuitarString</a></li><li><a href="Interval.html"><i class="icon-chevron-right"></i>Interval</a></li><li><a href="Note.html"><i class="icon-chevron-right"></i>Note</a></li><li><a href="Scale.html"><i class="icon-chevron-right"></i>Scale</a></li><li class="nav-header">Namespaces</li><li><a href="MUSIQ.html"><i class="icon-chevron-right"></i>MUSIQ</a></li><li class="nav-header">Globals</li><li><a href="global.html#chord"><i class="icon-chevron-right"></i>chord</a></li><li><a href="global.html#interval"><i class="icon-chevron-right"></i>interval</a></li><li><a href="global.html#note"><i class="icon-chevron-right"></i>note</a></li></ul>
+            </div>
+            <div class="span9">
+                <div class="page-header">
+                    <h1 class="page-title">Source: guitar/GuitarChord.js</h1>
+                </div>
+                
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+/**
+ * GuitarChord - a class for representing a guitar chord
+ * 
+ * 
+ * @constructor
+ * 
+ * @param {Guitar} guitar - a Guitar object on which this chord is played
+ * @param {Chord}  chord - a Chord object
+ * @param {array}  notes - a collection of GuitarNote objects (optional)
+ */
+
+var GuitarChord = function( guitar, chord, notes  ){
+    
+    this.guitar = guitar;
+    this.chord = chord;
+    this.notes = notes;
+    
+    this._barre = 0;
+    
+    /**
+     * how easy it is to play the chord.
+     * 
+     * these factors add weight:
+     * - each note played
+     *   + 1 for each note played
+     * - the distance of each note relative to the previous note
+     *   + 1 for each extra fret distance between two notes
+     * - the distance of the note to the base note
+     * - the number of fingers used
+     *   + 1 for each finger used, + 100 if more than all fingers are used (impossible)
+     * 
+     * lower is better, no note has ease 0,
+     * 1 note at least ease 1
+     */
+    var ease = 0;
+    
+    /** 
+     * five fingers that we can use
+     * 
+     * In case you're Django, please remove the last three
+     * items from the list 
+     * 0 : thumb
+     * 1 : index
+     * 2 : middle
+     * 3 : ring
+     * 4 : pinky
+     */
+    var fingersUsed = [ false, false, false, false, false];
+};
+
+/**
+ * maximum finger stretch
+ */
+GuitarChord.MAX_STRETCH = 3;
+
+
+/**
+ * finds all variations of a particular chord with a specific
+ * tonic. All these 
+ * 
+ * @param guitar {Guitar} - the guitar object (with specific tuning)
+ * @param chord {Chord} - the Chord object to find specific GuitarChords for
+ * @param base {GuitarNote} the Base note we want to base the chord on (GuitarNote)
+ * @param options {object} an object specifying more options:
+ *                  
+ *                      upPreference: false
+ *                      maxFingerStretch: 2
+ *                      maxDifficulty: 10 
+ *                  
+ * 
+ * @returns {array} an array of GuitarChord objects
+ */
+GuitarChord.fromChordAndBase = function( guitar, chord, base ){
+    
+    // from the base, walk up the neck, fret by fret
+    
+    var baseString = base.stringPos();
+    var baseFret = base.fretPos();
+    
+    var numNotes = chord.notes.length - (chord.optional ? chord.optional.length : 0);
+    
+    // exit if we have more required notes than possible frets to
+    
+    
+    //var foundNotes = [];
+    
+    /*
+    STEP 0:
+    filter out situations where not even all the notes in the chord would fit
+    on the selected strings
+    */
+    if( baseString + numNotes > guitar.strings.length){
+        //console.warn( "Not enough strings to find notes on!" + (guitar.strings.length - baseString));
+        return;
+    }
+    
+    /*
+    STEP 1: 
+    create a list for each fret of possible notes within the MAX_STRETCH
+    */
+    
+    var foundNotes = [];
+    var chordNotes = chord.notes;
+    // push the base note on the return array  
+    foundNotes.push( [ base ] );
+    
+    for( var i = baseString+1; i &lt; guitar.strings.length ; i++){
+        // get all notes on the string that match the chord 
+        var stringNotes = _(guitar.notes[i]).filter(function(note){
+            return _(chordNotes).contains(note.relPos());
+        });
+
+        // and are close enough to the base note
+        stringNotes = _(stringNotes).filter(function(note){
+            if( Math.abs( note.distanceTo(base)[1] ) &lt;= GuitarChord.MAX_STRETCH ){
+                //console.log("Found note " + note.simple() + " on pos [" + note.pos + "]");
+                return true;
+            }
+        });
+        
+        // if we have notes left, these 
+        // are potentially interesting
+        if( !stringNotes || stringNotes.length == 0 ){
+            console.log("No notes on string found!");
+        } else if( stringNotes.length == 1 ){
+            //console.log("One matching note on string found!");
+            //console.log( stringNotes );
+            foundNotes.push( stringNotes );
+            
+        } else {
+            // more notes found!
+            //console.log( stringNotes.length + " matching note on string found!");
+            //console.log( stringNotes );
+            
+            // for now, return the combined array
+            foundNotes.push( stringNotes );
+            
+        }
+    };
+    
+    var chordNotes = foundNotes;
+    // look them up - recursively
+    console.log("FoundNotes:");
+    console.log(chordNotes);
+    
+    /* 
+    STEP 2:
+    Create chords of all possible combinations 
+    */
+    
+    var combinations = function(lists) {
+        if (lists.length == 0) {
+            return [];
+        } else if( lists.length == 1 ){
+            return lists[0];
+        } else {
+            var pr = combinations(_.rest(lists));
+            var ret = [];
+            _.each(_.first(lists),function(fp) {
+                _.each(pr,function(p) {
+                    ret.push( [fp].concat(p) );
+                });
+            });
+          return ret;
+        }
+    };
+    
+    // array of chords
+    var matches = combinations( chordNotes );
+
+    console.log("STEP 2 - # of matches");
+    console.log( matches.length );
+    
+    /*
+    STEP 3:
+    filter out the chords that don't have all notes
+    */
+    var matches = _(matches).filter(function(match){
+        
+        // make a copy for reference
+        var remainingNotes = chord.relNotes.slice();
+        // loop through all notes of the match
+        
+        
+        // get an array of relative positions
+        var relNotes = _(match).map(function(note){
+            return note.relPos();
+            
+        });
+        //console.log("relnotes: ", relNotes);
+        //console.log( _(remainingNotes).difference(relNotes).length );
+        return _(remainingNotes).difference(relNotes).length == 0;
+    });
+    
+    console.log("STEP 3 - # of matches");
+    console.log( matches.length );
+    
+    /*
+    STEP 4:
+    filter out the chords where the fingers are too far from each other
+    */
+    var matches = _(matches).filter(function(match){
+        
+        
+        var fretNrs = _(match).map(function(note){
+            return note.fretPos();
+        });
+        
+        var lowestFret = _(fretNrs).min();
+        var highestFret = _(fretNrs).max();
+        
+        // we remove all matches where the notes are too far apart
+        if( Math.abs(lowestFret - highestFret) > GuitarChord.MAX_STRETCH )
+            return false;
+        
+        
+        // now remove all matches where the fingers are too far apart from each other
+        // note to note
+        for( var i = 1; i &lt; match.length; i++ ){
+            if( Math.abs(match[i].fretPos() - match[i-1].fretPos()) > GuitarChord.MAX_STRETCH )
+                return false;
+        }
+        
+        console.log("match ", fretNrs );
+        return true;
+    });
+    
+    console.log("STEP 4 - # of matches");
+    console.log( matches.length );
+    
+    
+    // check if we have found all the notes
+    
+    // can we calculate this recursively
+    return chordNotes;
+};
+
+/**
+ * finds all variations of a particular chord on the guitar neck
+ * 
+ * the chord should be relative
+ * - find the tonic on each fret
+ * 
+ * @param guitar {Guitar} - A Guitar object
+ * @param chord {Chord} - A chord object
+ * 
+ * @returns {GuitarChord}
+ */
+GuitarChord.fromChord = function( guitar, chord ){
+    
+    if( !chord.relative ){
+        console.warn("Relative chord not allowed!");
+        return null;
+    }
+    
+    // get all base (lowest) notes
+    var baseNotes = [];
+    
+    // we only have to check the bottom four strings
+    
+    _(guitar.notes).each(function(string_notes, str_num){
+        _(string_notes).each(function(note, fret_num){
+            //console.log(note);
+            if( chord.contains(note.note) ){
+                //console.log(note);
+                baseNotes.push( note );
+            }
+        });
+    });
+    
+    console.log(baseNotes);
+    
+    // get all possible chord variations for each chord
+    return _.compact( _(baseNotes).map(function(base){
+        var guitarChord = GuitarChord.fromChordAndBase( guitar, chord, base );
+        return guitarChord;
+    }));
+};
+
+/**
+ * check if a guitar chord is valid
+ * this is when all notes can be matched
+ * with a note in the chord object.
+ * 
+ * 
+ * 
+ * @returns {boolean} - true if the chord is valid
+ * 
+ * @todo implement function
+ */
+GuitarChord.prototype.valid = function(){
+    
+};
+
+/**
+ * barre - 
+ * 
+ * @returns {integer}   how many fingers can be played barre. Calculated from the
+ *                      top string
+ * 
+ * @todo test function
+ */
+GuitarChord.prototype.barre = function(){
+    // check highest strings and recurse down, adding as we go
+    var same = 0;
+    var lastFret = _(this.guitar.frets).last();
+    
+    _(this.notes).pluck('fret').reverse().each(function(item){
+        if( item == lastFret ) same++;
+    });
+    
+    console.log(same);
+    return same;
+    
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+        </div>
+        
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Mar 27 2013 10:13:21 GMT-0400 (EDT)
+        </footer>
+    </div>
+
+
+
+<script> prettyPrint(); </script>
+<script src="../script/lib/bootstrap/bootstrap.min.js"></script>
+</body>
+</html>

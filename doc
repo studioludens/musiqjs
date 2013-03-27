@@ -1,0 +1,4 @@
+#!/bin/sh
+# run jsdoc with the right template
+echo "Creating Documentation..." ./node_modules/jsdoc/jsdoc -r src/ -d docs -t jsdoc-template/
+echo "Done!!"

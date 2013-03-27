@@ -1,0 +1,23 @@
+/**
+custom styles to make everything a bit more readable
+**/
+
+header {
+    padding: 0;
+}
+
+h3 {
+    margin-top: 36px;
+}
+
+h4 {
+    margin-top: 36px;
+    line-height: 160%;
+}
+
+dt.doc-header {
+    cursor: hand; cursor: pointer;
+}
+dd.doc-content {
+    display: none;
+}

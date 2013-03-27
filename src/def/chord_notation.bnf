@@ -1,0 +1,15 @@
+// Backus-Naur Form for a valid chord notation
+
+<chord-notation> ::= <note> <opt-white-space> <description>
+
+<note> ::= <note-name> <opt-accidental>
+
+// chord description, I'm using ... to indicate it's part of a larger list
+
+<description> ::= "M" | "major" | "m" | "minor" | "minor 9th" | ...
+
+// optional accidental
+
+<opt-accidental> ::= "bbb" | "bb" | "b" | "" | "#" | "##"
+
+<opt-white-space> ::= " " | ""

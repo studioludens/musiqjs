@@ -1,18 +1,44 @@
+'use strict';
 /**
  * MUSIQ: a javascript library for note and chord analysis
+ * 
+ * 
+ * @namespace
+ * 
+ * @property {array} noteNames - array of common note names
+ * @property {array} notePositions - array of semitones for the notes in noteNames
+ * @property {array} sharpNames - all notes represented with sharps
+ * @property {array} flatNames - all notes represented with flats
+ * @property {array} accidentals - accidentals that can be used for the notes
+ * @property {array} cofPositions - position on the circle of fifths
+ * @property {array} tonicPositions - preferred tonics for note lookup
+ * @property {array} signatures - signatures (-1 means 1 flat, 1 means 1 sharp)
+ * @property {array} solfege - solfege names
+ * @property {array} intervalNames - names of the intervals
+ * @property {array} chordExtensionNotes
+ * @property {array} chords - a list of the most commonly occuring chords (in JSON format)
+ * @property {array} scales
+ * 
+ * 
+ * 
  */
-
 var MUSIQ = {
     /**
      * the normal names of the notes
      */
     noteNames : ["C", "D", "E", "F", "G", "A", "B"],
+    
+    /**
+     * positions of the normal notes
+     */
     notePositions: [0, 2, 4, 5, 7, 9, 11],
 
     /**
      * the sharp names for all the notes
+     * 
      */
     sharpNames : ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+    
 
     /**
      * the flat names for all the notes
@@ -22,7 +48,7 @@ var MUSIQ = {
     /**
      * accidentals that can be used for the notes
      */
-    accidentals : ["bbb","bb","b","","#","x"],
+    accidentals : ["bbb","bb","b","","#","##","###"],
 
     /**
      * position on the circle of fifths
@@ -62,298 +88,378 @@ var MUSIQ = {
                         "octave"
                     ],
                     
-    chordExtensionNotes : [1,2,5,8,9],
+    chordExtensionNotes : [1,2,8,9],
     /**
      * a list of the most commonly occuring chords
      * in JSON format
      */
-    chords: {
+    chords: [
+        /* power chord */
+        {
+                'names': ["5", "power"],
+                'longName': " power",
+                'notes': [ 0, 7 ]
+             },
         /* triads */
-        'M': {  'names': ["","M", "maj", "ma", "major"],
+        {  
+                'names': ["maj", "M","ma", "major", ""],
                 'longName': "major",
                 'notes': [ 0, 4, 7 ]
              },
-        'm': {  'names': ["m","mi","min","minor"],
+        {  'names': ["m","mi","min","minor","-"],
                 'longName': "minor",
                 'notes': [ 0, 3, 7 ]
              },
-        'dim': {  
+        {  
                 'names': ["dim","diminished","o"],
                 'longName': "diminished",
                 'notes': [ 0, 3, 6 ]
              },
-        'aug': {  
+        {  
                 'names': ["aug","augmented","a"],
                 'longName': "augmented",
                 'notes': [ 0, 4, 8 ]
              },
         /* suspended chords */
-        'sus2': {  
+        {  
                 'names': ["sus2"],
                 'longName': "suspended 2nd",
                 'notes': [ 0, 2, 7 ]
              },
-        'sus4': {  
-                'names': ["sus4"],
+        {  
+                'names': ["sus4","su","sus"],
                 'longName': "suspended 4th",
                 'notes': [ 0, 5, 7 ]
              },      
              
         /* jazz (7th) chords */
-        'maj7': {  
-                'names': ["maj7"],
+        {  
+                'names': ["maj7","maj 7", "major 7"],
                 'longName': "major 7th",
-                'notes': [ 0, 4, 7, 11 ]
+                'notes': [ 0, 4, 7, 11 ],
+                'optional': [7]
              },
-        'm7': {  
-                'names': ["m7"],
+        {  
+                'names': ["m7","mi7","min7","minor 7","-7"],
                 'longName': "minor 7th",
-                'notes': [ 0, 3, 7, 10 ]
+                'notes': [ 0, 3, 7, 10 ],
+                'optional': [7]
              },
-        'M7': {  
+        {  
                 'names': ["7","M7"],
                 'longName': "dominant 7th",
-                'notes': [ 0, 4, 7, 10 ]
+                'notes': [ 0, 4, 7, 10 ],
+                'optional': [7]
              },
-        'dim7': {  
-                'names': ["dim7"],
+        {  
+                'names': ["dim7","dim 7"],
                 'longName': "diminished 7th",
                 'notes': [ 0, 3, 6, 9 ]
              },
-        'm7b5': {  
-                'names': ["m7b5"],
+        {  
+                'names': ["m7b5","ø7","-7b5","m7(b5)"],
                 'longName': "half diminished",
                 'notes': [ 0, 3, 6, 10 ]
                 
              },
-        'mM7': {  
+        {  
                 'names': ["mM7"],
                 'longName': "minor major seventh",
                 'notes': [ 0, 3, 7, 11 ],
-                'optionalFifth': true
+                'optional': [7]
              },
         /* sixths chords */
-        'maj6': {  
+        {  
                 'names': ["6"],
                 'longName': "major 6th",
                 'notes': [ 0, 4, 7, 9 ],
-                'optionalFifth': true
+                'optional': [7]
              },
-        'm6': {  
+        {  
                 'names': ["m6"],
                 'longName': "minor 6th",
                 'notes': [ 0, 3, 7, 9 ],
-                'optionalFifth': true
+                'optional': [7]
              },
         /* ninth chords */
-        'M9': {  
-                'names': ["9"],
+        {  
+                'names': ["9","M9"],
                 'longName': "dominant 9th",
                 'notes': [ 0, 4, 7, 10, 14 ],
-                'optionalFifth': true
+                'optional': [7]
              },
-        'maj9': {  
+        {  
                 'names': ["maj9"],
                 'longName': "major 9th",
                 'notes': [ 0, 4, 7, 11, 14 ],
-                'optionalFifth': true
+                'optional': [7]
              },
-        'm9': {  
+        {  
                 'names': ["m9"],
                 'longName': "minor 9th",
-                'notes': [ 0, 3, 7, 11, 14 ],
-                'optionalFifth': true
+                'notes': [ 0, 3, 7, 10, 14 ],
+                'optional': [7]
              },
-        'madd9': {  
-                'names': ["madd9"],
+        {  
+                'names': ["madd9","m add9","min add9"],
                 'longName': "minor add 9th",
                 'notes': [ 0, 3, 7, 14 ],
-                'optionalFifth': true
+                'optional': [7]
              },
-        'Madd9': {  
-                'names': ["add9"],
+        {  
+                'names': ["add9","Madd9","maj add9"],
                 'longName': "major add 9th",
                 'notes': [ 0, 4, 7, 14 ],
-                'optionalFifth': true
+                'optional': [7]
                 
              },
-        '6/9': {  
-                'names': ["6/9"],
+        {  
+                'names': ["6/9","69"],
                 'longName': "6 9th chord",
                 'notes': [ 0, 4, 7, 9, 14 ],
-                'optionalFifth': true
+                'optional': [7]
              },
-        'M b9': {  
-                'name': [" b9"],
-                'longName': "flat 9th",
+        {  
+                'names': [" b9","Mb9","maj b9"],
+                'longName': "major flat 9th",
+                'notes': [ 0, 4, 7, 11, 13 ],
+                'optional': [7]
+             },
+        {  
+                'names': ["7b9","M7b9","7 b9"],
+                'longName': "dominant 7th flat 9th",
                 'notes': [ 0, 4, 7, 10, 13 ],
-                'optionalFifth': true
+                'optional': [7]
              },
-        'M #9': {  
-                'names': [" #9"],
+        {  
+                'names': ["7#9","M7#9","7 #9","hendrix","7alt"],
+                'longName': "dominant 7th sharp 9th",
+                'notes': [ 0, 3, 4, 7, 10],
+                'optional': [7]
+             },
+        {  
+                'names': ["#9","M#9","M #9","maj #9"],
                 'longName': "sharp 9th",
-                'notes': [ 0, 4, 7, 10, 15 ],
-                'optionalFifth': true
+                'notes': [ 0, 4, 7, 15 ],
+                'optional': [7]
              },
         
         
         /* eleventh chords */
-        'maj11': {  
+        {  
                 'names': ["maj11"],
                 'longName': "major 11th",
                 'notes': [ 0, 4, 7, 11, 17 ],
-                'optionalFifth': true
+                'optional': [7]
                 
              },
-        'm11': {  
+        {  
                 'names': ["m11"],
                 'longName': "minor 11th",
                 'notes': [ 0, 3, 7, 10, 17 ],
-                'optionalFifth': true
+                'optional': [7, 10]
              },
-        'M11': {  
+        {  
                 'names': ["11"],
                 'longName': "dominant 11th",
                 'notes': [ 0, 4, 7, 10, 17 ],
-                'optionalFifth': true
+                'optional': [7, 10]
              },
         
         /* thirteenth chords */
-        'maj13': {  
+        {  
                 'names': ["maj13"],
                 'longName': "major 13th",
                 'notes': [ 0, 4, 7, 11, 21 ],
-                'optionalFifth': true
+                'optional': [7]
                 
              },
-        'm13': {  
+        {  
                 'names': ["m13"],
                 'longName': "minor 13th",
                 'notes': [ 0, 3, 7, 10, 21 ],
-                'optionalFifth': true
+                'optional': [7]
              },
-        'M13': {  
-                'names': ["13"],
+        {  
+                'names': ["13","M13"],
                 'longName': "dominant 13th",
                 'notes': [ 0, 4, 7, 10, 21 ],
-                'optionalFifth': true
+                'optional': [7]
              },  
-        ' b13': {  
+        {  
                 'names': [" b13"],
                 'longName': "flat 13th",
                 'notes': [ 0, 4, 7, 10, 20 ],
-                'optionalFifth': true
+                'optional': [7]
              }   
         
-    },
+    ],
     
     
     /* LOTS OF SCALES */
-    scales: {
-        'chromatic' : {
-            'names': ['Chromatic'],
+    scales: [
+        {
+            'names': ['chromatic','chro'],
+            'longName': 'chromatic',
             'notes': [0,1,2,3,4,5,6,7,8,9,10,11]
         },
         
-        'major' : {
-            'names': ['Major','Ionian'],
+        {
+            'names': ['major','ionian',"-major"],
+            'longName': 'major',
             'notes': [0,2,4,5,7,9,11]
         },
-        'minor' : {
-            'names': ['Minor','Aeolian'],
+        {
+            'names': ['minor','aeolian'],
+            'longName': 'minor',
             'notes': [0,2,3,5,7,8,10]
         },
         
         
         
         /* pentatonic */
-        'minor pentatonic' : {
-            'names': ['Minor Pentatonic'],
-            'notes': [0,2,3,7,9]
+        
+        {
+            'names': ['major pentatonic','pentatonic'],
+            'longName': 'major pentatonic',
+            'notes': [0,2,4,7,9]
+        },
+        {
+            'names': ['minor pentatonic','relative minor pentatonic'],
+            'longName': 'relative minor pentatonic',
+            'notes': [0,3,5,7,10]
         },
         
-        'major pentatonic' : {
-            'names': ['Major Pentatonic'],
-            'notes': [0,2,4,7,9]
+        
+        
+        /* blues (with blue notes added) */
+        {
+            'names': ['major blues','blues major','blues','hexatonic'],
+            'longName': 'major blues',
+            'notes': [0,2,4,6,7,9]
+        },
+        
+        {
+            'names': ['minor blues','blues minor','m blues'],
+            'longName': 'minor blues',
+            'notes': [0,3,5,6,7,10]
         },
         
         
         /* modes : TODO */
-        'ionian' : {
-            'names': ['Ionian','Major'],
+        {
+            'names': ['ionian','Major'],
+            'longName': 'ionian',
             'notes': [0,2,4,5,7,9,11]
         },
-        'dorian' : {
-            'names': ['Dorian'],
+        {
+            'names': ['dorian'],
+            'longName': 'dorian',
             'notes': [0,2,3,5,7,9,10]
         },
-        'phrygian' : {
-            'names': ['Phrygian'],
+        {
+            'names': ['phrygian'],
+            'longName': 'phrygian',
             'notes': [0,1,3,5,7,8,10]
         },
-        'lydian' : {
-            'names': ['Lydian'],
+        {
+            'names': ['lydian'],
+            'longName': 'lydian',
             'notes': [0,2,4,6,7,9,11]
         },
-        'mixolydian' : {
-            'names': ['Mixolydian'],
+        {
+            'names': ['mixolydian'],
+            'longName': 'mixolydian',
             'notes': [0,2,4,5,7,9,10]
         },
-        'aeolian' : {
-            'names': ['Aeolian', 'Natural Minor'],
+        {
+            'names': ['aeolian', 'natural minor'],
+            'longName': 'aeolian',
             'notes': [0,2,3,5,7,8,10]
         },
-        'locrian' : {
-            'names': ['Locrian'],
+        {
+            'names': ['locrian'],
+            'longName': 'locrian',
             'notes': [0,1,3,5,6,8,10]
         }
         
         /* some simple scales */
-    }
+    ],
+    
+    /** SOME REGULAR EXPRESSION MATCHES **/
+    NOTE_REGEX : "([A-G]|[a-g])(bbb|bb|b|#|##)? ?([0-9])? ?(n|no|not|note|notes)",
+    NOTE_SIMPLE_REGEX : "([A-G]|[a-g])(bbb|bb|b|#|##|###)?",
+    SCALE_REGEX : "(s|sc|sca|scal|scale)?",
+    CHORD_REGEX : "(c|ch|cho|chrd|chor|chord)?"
 };
 
 // MUSIQ utility functions
 
 /**
+ * the very powerful match() function takes a string
+ * and tries to find all the matches, be it notes, chords
+ * or scales.
+ * 
+ * @param {string} name - a name of a note, chord or scale
+ * 
+ * @returns {array} - an array of match objects (Note/Scale/Chord)
+ */
+MUSIQ.match = function( name ){
+    
+    
+    var ret = [];
+    
+    if( MUSIQ.isValidNote( name )){
+        console.log("Match single note");
+       ret.push( Note.fromNotation(name) );
+    }
+    
+    if( MUSIQ.isValidNoteList( name ) ){
+        console.log("Match multiple notes");
+        ret.concat( Note.fromNotation(name)); 
+    } 
+    
+    if( MUSIQ.isValidChord( name )){
+        console.log("Match single chord");
+        ret.push( Chords.fromNotation( name ));
+    }
+    if( MUSIQ.isValidScale( name )){
+        console.log("Match single scale");
+        ret.push( Chords.fromNotation( name, 'scale' ) );
+    }
+    
+    console.log( "MusiQ MAtch: " + name)
+    console.log( ret )
+    
+    return ret;
+};
+
+
+/**
  * isValidNote
- * @returns true if the note can be parsed into a Note object
+ * 
+ * @param {string} notation - a string notation for a note
+ * 
+ * @returns {boolean} true if the note can be parsed into a Note object
  */
 MUSIQ.isValidNote = function( notation ){
     
-    // trim string and each substring
+    if( !notation ) return false;
     
-    var items = _(notation.trim().split(/(\d+)/)).map(function(item){return item.trim(); });
-    console.log("isValidNote on " + notation);
-    console.log(items);
+    var regex = new RegExp("^" + MUSIQ.NOTE_REGEX + "?$","m");
+    return regex.exec( notation );
     
-    if( items.length > 3 ){
-        // more than one note, return 
-        return false;
-    } else {
-        
-        // get note position 
-        var nn = items[0][0].toUpperCase();
-        var npos = MUSIQ.notePositions[ MUSIQ.noteNames.indexOf( nn ) ];
-        
-        // get accidental position
-        var accString = items[0].substring(1);
-        var acc = MUSIQ.accidentals.indexOf( accString ) - 3;
-        
-        // error case
-        if( acc < -3 || typeof npos == 'undefined' || npos < 0 || parseInt(items[1]) > 5 ){
-            return false;
-        }
-        
-        // it's a valid note
-        return true;
-        
-    }
 };
 
 /**
- * @returns true if the list (in string format) is a valid list
+ * 
+ * @param {array} list
+ * @returns {boolean} true if the list (in string format) is a valid list
  * we can use thesse delimiters:  " " (space), "," (comma) and "|" (pipe)
  * more probably to follow...
+ * 
+ * @todo: implement this function
+ * 
  */
 MUSIQ.isValidNoteList = function( list ){
    // split the list 
@@ -361,38 +467,115 @@ MUSIQ.isValidNoteList = function( list ){
 };
 
 /**
- * @returns true if
+ * 
+ * @todo: store these in a static variable when the function is first called
+ * 
+ * @param {string} notation - string notation to check if valid
+ * 
+ * @returns {array} matches from the regular expression if it's a valid chord
+ *              0 : the whole matched name
+ *              1 : the note
+ *              2 : any specified accidentals
+ *              3 : chord indicator / name
  */
-MUSIQ.isValidChord = function( chord ){
+MUSIQ.isValidChord = function( notation ){
     
-    console.log("isValidChord on " + chord);
+    if( !notation) return false;
     
-    // check if the chord name is valid
-    if( Chord.fromNotation( chord.trim() ) ) return true;
-    else return false;
+    // default to major
+    var not = notation;
+    if( !notation || notation.length == 0 ) not = "M";
+    
+    // TODO: make this shorter
+    /*
+    var chordNames = 
+       _.chain(MUSIQ.chords)
+        .pluck("longname")
+        .union( 
+            _(MUSIQ.chords).pluck("names") )
+        .value()
+        .join("|");
+    */
+    
+    var chordNames = _(MUSIQ.chords).reduce(function(memo, item){
+        var m = _(memo).isString() ? memo : memo.names.join("|") + "|" + memo.longName;
+        //console.log(m);
+        return m + "|" + item.names.join("|") + "|" + item.longName;
+    });
+    
+    var regex = new RegExp("^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ chordNames + ")? ?" + MUSIQ.CHORD_REGEX + "$","m");
+    //console.log( regex );
+    return regex.exec( not );
 };
 
 /**
- * @returns true if
+ * @param {array} list - list of strings with chord names
+ * @returns {boolean} true if all chords are valid
+ * 
+ * @todo - implement function
  */
-MUSIQ.isValidChordList = function( chord ){
+MUSIQ.isValidChordList = function( list ){
     // check if the chord name is valid
     return false;
 };
 
 /**
- * @returns true if
+ * 
+ * @param {string} notation - 
+ * @returns {boolean} true if it's a valid scale
  */
-MUSIQ.isValidScale = function( chord ){
-    // check if the scale name is valid
-    return false;
+MUSIQ.isValidScale = function( notation ){
+    
+    if( !notation) return false;
+    
+    // default to major
+    var not = notation;
+    if( !notation || notation.length === 0 ) not = "M";
+    
+    // TODO: make this shorter
+    
+    var scaleNames = _(MUSIQ.scales).reduce(function(memo, item){
+        var m = _(memo).isString() ? memo : memo.names.join("|");
+        //console.log(m);
+        return m + "|" + item.names.join("|");
+    });
+    
+    var regex = new RegExp("^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ scaleNames + ")? ?" + MUSIQ.SCALE_REGEX + "$","m");
+    return regex.exec( not );
 };
 
 /**
- * @returns true if
+ * @returns {boolean} true if
+ * 
+ * @todo implement function
  */
 MUSIQ.isValidScaleList = function( chord ){
     // check if the scale name is valid
     return false;
 };
 
+/**
+ * guitar stuff
+ */
+MUSIQ.guitar = {};
+
+/**
+ * @returns {array} a list of matches if it's a valid finger position of the notes
+ * currently played on a guitar neck
+ * 
+ * example: "0 2 2 1 0 x" - should get an E-chord
+ * 
+ */
+MUSIQ.guitar.isValidFingerPos = function( tab ){
+    var regex = new RegExp("^((xX|[0-9]{1,2})[ -]*){6}$","m");
+    return regex.exec( tab );
+};
+
+/**
+ * @param {GuitarChord} chord - a GuitarChord object
+ * 
+ * @todo implement function
+ */
+MUSIQ.guitar.isValidChord = function( chord ){
+    
+};
