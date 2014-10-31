@@ -1,3 +1,20 @@
+/**
+ *  * @property {array} noteNames - array of common note names
+ * @property {array} notePositions - array of semitones for the notes in noteNames
+ * @property {array} sharpNames - all notes represented with sharps
+ * @property {array} flatNames - all notes represented with flats
+ * @property {array} accidentals - accidentals that can be used for the notes
+ * @property {array} cofPositions - position on the circle of fifths
+ * @property {array} tonicPositions - preferred tonics for note lookup
+ * @property {array} signatures - signatures (-1 means 1 flat, 1 means 1 sharp)
+ * @property {array} solfege - solfege names
+ * @property {array} intervalNames - names of the intervals
+ * @property {array} chordExtensionNotes
+ * @property {array} chords - a list of the most commonly occuring chords (in JSON format)
+ * @property {array} scales
+ *
+ * @type {{noteNames: string[], notePositions: number[], sharpNames: string[], flatNames: string[], accidentals: string[], cofPositions: number[], tonicPositions: number[], signatures: number[], solfege: string[], intervalNames: string[], chordExtensionNotes: number[], chords: *[], scales: {names: string[], longName: string, notes: number[]}[], NOTE_REGEX: string, NOTE_SIMPLE_REGEX: string, SCALE_REGEX: string, CHORD_REGEX: string}}
+ */
 module.exports = {
     /**
      * the normal names of the notes

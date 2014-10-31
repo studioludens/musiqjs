@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 'use strict';
 /**
  * GuitarChord - a class for representing a guitar chord

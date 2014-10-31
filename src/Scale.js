@@ -1,6 +1,6 @@
 'use strict';
 /**
- * the MUSIQ.js scale class
+ * the musiq.js scale class
  * 
  * @class
  * 
@@ -30,6 +30,12 @@ Scale.extend = function( startOctave, endOctave ){
     this.endOctave = endOctave;
 };
 
-/*Scale.prototype.type = function(){
-    return "scale";
-}*/
+var scalePrototype = {
+    type: function(){
+        return "scale";
+    }
+};
+
+Scale.prototype = scalePrototype;
+
+module.exports = Scale;

@@ -1,6 +1,8 @@
+var defs = require('./defs');
+
 'use strict';
 /**
- * the MUSIQ.js chord class
+ * the musiq.js chord class
  * 
  * @constructor
  * @param {array} notes - a simple array of integers representing the midi notes
@@ -61,13 +63,13 @@ Chord.fromNotation = function( name, type ){
     
     if( type == 'scale'){
         matches = MUSIQ.isValidScale( name );
-        lookup = MUSIQ.scales;
+        lookup = defs.scales;
         chordType = 'scale';
         //console.log("Checking Scale");
     } else {
         // default to chord
         matches = MUSIQ.isValidChord( name );
-        lookup = MUSIQ.chords;
+        lookup = defs.chords;
         chordType = 'chord';
         //console.log("Checking Chord");
     }
@@ -404,7 +406,7 @@ Chords.fromNotes = function( notes, inversion ){
             else {
                 // filter out special notes, like 9th, 11th and 13th
                 var relNote = note % 12;
-                if (MUSIQ.chordExtensionNotes.indexOf(relNote) > -1) {
+                if (defs.chordExtensionNotes.indexOf(relNote) > -1) {
                     return relNote + 12;
                 }
                 else {
@@ -428,7 +430,7 @@ Chords.fromNotes = function( notes, inversion ){
         //console.log("Check descriptors");
         
         // find chords in the descriptor list that match
-        var matchedChordDescrs = _(MUSIQ.chords).filter(function(chord) {
+        var matchedChordDescrs = _(defs.chords).filter(function(chord) {
             
             
             if( chord.optional ){
@@ -514,3 +516,5 @@ Chords.fromNotation = Chord.fromNotation;
 function chord( name ){
     return Chord.fromNotation(name );
 }
+
+module.exports = chord;
