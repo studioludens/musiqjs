@@ -1,8 +1,10 @@
 var _ = require('lodash'),
-    defs = require('./defs');
+    defs = require('./defs'),
+    validators = require('./validators'),
+    Note = require('./note'),
+    Chord = require('./chord'),
+    Chords = require('./chords');
 
-
-'use strict';
 /**
  * MUSIQ: a javascript library for note and chord analysis
  * 
@@ -24,21 +26,21 @@ var utils = {
 
         var ret = [];
 
-        if( functions.isValidNote( name )){
+        if( validators.isValidNote( name )){
             console.log("Match single note");
             ret.push( Note.fromNotation(name) );
         }
 
-        if( functions.isValidNoteList( name ) ){
+        if( validators.isValidNoteList( name ) ){
             console.log("Match multiple notes");
             ret.concat( Note.fromNotation(name));
         }
 
-        if( functions.isValidChord( name )){
+        if( validators.isValidChord( name )){
             console.log("Match single chord");
             ret.push( Chords.fromNotation( name ));
         }
-        if( functions.isValidScale( name )){
+        if( validators.isValidScale( name )){
             console.log("Match single scale");
             ret.push( Chords.fromNotation( name, 'scale' ) );
         }
@@ -51,5 +53,7 @@ var utils = {
 musiq = _.extend(musiq, utils);
 // extend MUSIQ object with defaults
 musiq = _.extend(musiq, defs);
+// extend MUSIQ object with validators
+musiq = _.extend(musiq, validators);
 
-module.exports = MUSIQ;
+module.exports = musiq;

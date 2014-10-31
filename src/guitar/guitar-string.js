@@ -1,4 +1,4 @@
-'use strict';
+var _ = require('lodash');
 /** 
  * guitar string class
  * 
@@ -6,8 +6,8 @@
  * @constructor
  * 
  * @param {Guitar} guitar - the Guitar object this String belongs to
- * @param {integer} base - the base note position of this string
- * @param {integer} pos - the position of the string relative to the other strings
+ * @param {int} base - the base note position of this string
+ * @param {int} pos - the position of the string relative to the other strings
  */
 
 var GuitarString = function( guitar, pos, base ){
@@ -42,26 +42,26 @@ GuitarString.prototype.matchNotes = function( note ){
 /**
  * get a list of integers that represents all active notes on this string
  * 
- * @returns {integer[]}
+ * @returns {int[]}
  * 
  * @todo implement function
  */
 GuitarString.prototype.activeNotes = function( chord ){
-    return;
+    return [];
 };
 
 /**
  * set the note on the specified fret as the only active note on this string
  * 
- * @param {integer} fret - integer representing the fret position
+ * @param {int} fret - integer representing the fret position
  * @param {boolean} value - true if the GuitarNote should be set to active
  * 
  * @returns {GuitarString} - return this GuitarString
  */
 GuitarString.prototype.onlyActive = function( fret, value ){
     
-    _(this.guitar.notes[this.pos]).each(function(note, key){
-        if( key == fret )
+    _.each(this.guitar.notes[this.pos], function(note, key){
+        if( key === fret )
             note.active(value);
         else
             note.active(false);
@@ -70,3 +70,5 @@ GuitarString.prototype.onlyActive = function( fret, value ){
     
     return this;
 };
+
+module.exports = GuitarString;

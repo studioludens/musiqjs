@@ -1,4 +1,12 @@
-'use strict';
+var _ = require('lodash'),
+    Note = require('../note');
+
+/**
+ * the default state of the guitar note.
+ * when you use this, make sure to MAKE A COPY!
+ */
+var DEFAULT_STATE = { active: false, ghosted: false, tonic: false };
+
 /** 
  * the guitar note data object
  * 
@@ -25,7 +33,7 @@ var GuitarNote = function( guitar, guitarString, fret, pos, state ){
     
     //console.log( this.pos );
     
-    this.state = state || _.clone( GuitarNote.DEFAULT_STATE );
+    this.state = state || _.clone( DEFAULT_STATE );
     
     /*
      * create a Note object for easy access
@@ -34,12 +42,6 @@ var GuitarNote = function( guitar, guitarString, fret, pos, state ){
 
     //console.log( this.note );
 };
-
-/**
- * the default state of the guitar note. 
- * when you use this, make sure to MAKE A COPY!
- */
-GuitarNote.DEFAULT_STATE = { active: false, ghosted: false, tonic: false };
 
 /**
  * get the notation
@@ -53,7 +55,7 @@ GuitarNote.prototype.notation = function(){
 /**
  * get the short notation
  * 
- * @param {integer} signature 
+ * @param {int} signature
  * 
  * @returns {string} the Chord notation
  */
@@ -69,7 +71,7 @@ GuitarNote.prototype.simple = function( signature ){
  * @returns {boolean} true if the state is active
  */
 GuitarNote.prototype.active = function( value ){
-    if( typeof value != 'undefined'){
+    if( !_.isUndefined(value)){
         this.state.active = value;
         return this.state.active;
     } else {
@@ -84,7 +86,7 @@ GuitarNote.prototype.active = function( value ){
  * @returns {boolean} true if the state is tonic
  */
 GuitarNote.prototype.tonic = function( value ){
-    if( typeof value != 'undefined'){
+    if(!_.isUndefined(value)){
         this.state.tonic = value;
         return this.state.tonic;
     } else {
@@ -99,7 +101,7 @@ GuitarNote.prototype.tonic = function( value ){
  * @returns {boolean} true if the state is active
  */
 GuitarNote.prototype.ghosted = function( value ){
-    if( typeof value != 'undefined'){
+    if(!_.isUndefined(value)){
         this.state.ghosted = value;
         return this.state.ghosted;
     } else {
@@ -109,7 +111,7 @@ GuitarNote.prototype.ghosted = function( value ){
 
 /**
  * 
- * @returns {integer} - number of the fret this note is on
+ * @returns {int} - number of the fret this note is on
  */
 GuitarNote.prototype.fretPos = function(){
     return this.pos[1];
@@ -117,7 +119,7 @@ GuitarNote.prototype.fretPos = function(){
 
 /**
  * 
- * @returns {integer} - number of the string this note is on
+ * @returns {int} - number of the string this note is on
  *                      0 is the lowest string (in standard Guitar tuning
  *                      this would be the low E)
  */
@@ -192,3 +194,5 @@ GuitarNote.prototype.relativeNotePos = function(){
 GuitarNote.prototype.distanceTo = function( otherNote ){
     return [ otherNote.pos[0] - this.pos[0], otherNote.pos[1] - this.pos[1] ];
 };
+
+module.exports = GuitarNote;

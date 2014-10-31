@@ -1,4 +1,5 @@
-var defs = require('./defs');
+var _ = require('lodash'),
+    defs = require('./defs');
 
 var validators = {
 
@@ -51,7 +52,7 @@ var validators = {
 
         // default to major
         var not = notation;
-        if( !notation || notation.length == 0 ) not = "M";
+        if( !notation || notation.length === 0 ) not = "M";
 
         // TODO: make this shorter
         /*
@@ -64,7 +65,7 @@ var validators = {
          .join("|");
          */
 
-        var chordNames = _(defs.chords).reduce(function(memo, item){
+        var chordNames = _.reduce(defs.chords, function(memo, item){
             var m = _(memo).isString() ? memo : memo.names.join("|") + "|" + memo.longName;
             //console.log(m);
             return m + "|" + item.names.join("|") + "|" + item.longName;
@@ -101,7 +102,7 @@ var validators = {
 
         // TODO: make this shorter
 
-        var scaleNames = _(scales).reduce(function(memo, item){
+        var scaleNames = _.reduce(defs.scales, function(memo, item){
             var m = _(memo).isString() ? memo : memo.names.join("|");
             //console.log(m);
             return m + "|" + item.names.join("|");
@@ -122,3 +123,5 @@ var validators = {
     }
 
 };
+
+module.exports = validators;

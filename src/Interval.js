@@ -1,6 +1,6 @@
-var defs = require('./defs');
+var _ = require('lodash'),
+    defs = require('./defs');
 
-'use strict';
 /**
  * 
  * data structure for an interval

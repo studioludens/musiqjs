@@ -1,12 +1,13 @@
-var defs = require('./defs'),
+var _ = require('lodash'),
+    defs = require('./defs'),
+    validators = require('./validators'),
     Interval = require('./interval');
 
-'use strict';
 /**
  * the musiq.js Note object
  * 
  * @constructor
- * @param {integer} pos - the midi position of the note
+ * @param {int} pos - the midi position of the note
  * @param {boolean} relative - a boolean, true if the note is relative (it doesn't have
  *                   an octave). if relative is true, pos should not be larger
  *                   than 12
@@ -41,7 +42,7 @@ var staticMethods = {
         // split the notation
         if( !notation ) return;
 
-        var matches = MUSIQ.isValidNote( notation );
+        var matches = validators.isValidNote( notation );
 
         //console.log( "Note.fromNotation matches : " + notation );
         //console.log( matches );
@@ -53,7 +54,7 @@ var staticMethods = {
         }
 
         var note = matches[1];
-        var acc = (matches[2] || "").replace("♭","b").replace("♯","#");;
+        var acc = (matches[2] || "").replace("♭","b").replace("♯","#");
         var octave = +matches[3] || 0 ;
 
 
@@ -64,7 +65,7 @@ var staticMethods = {
         // it's not a relative note
 
         var relative = octave < 1;
-        if( matches[3] == "0" ) relative = false;
+        if( matches[3] === "0" ) relative = false;
 
         //console.log(" Note " + notation + " octave = " + octave + ", relative = " + relative + ", acc = " + acc);
 
@@ -78,10 +79,10 @@ var staticMethods = {
         //console.log( npos );
 
         // get accidental position
-        var acc = defs.accidentals.indexOf( acc ) - 3;
+        acc = defs.accidentals.indexOf( acc ) - 3;
 
         // error case
-        if( acc < -3 || typeof npos == 'undefined' || npos < 0 ){
+        if( acc < -3 || _.isUndefined(npos) || npos < 0 ){
             // sorry, nothing we can do
             console.warn("ERROR: note not found (" + notation + ")");
             return null;
@@ -102,7 +103,7 @@ var staticMethods = {
     /**
      * make a note object from a position
      *
-     * @param {integer} pos - the midi position of the note
+     * @param {int} pos - the midi position of the note
      *
      * @returns {Note}
      */
@@ -117,7 +118,7 @@ var staticMethods = {
      *
      * @param {Note} note1 - The first note
      * @param {Note} note2 - The second note
-     * @returns {integer} The distance between the notes in semitones
+     * @returns {int} The distance between the notes in semitones
      */
     distance: function( note1, note2 ){
         return note2.pos - note1.pos;
@@ -132,7 +133,7 @@ var staticMethods = {
      * @param {Note} note1 - The first note
      * @param {Note} note2 - The second note
      *
-     * @returns {integer} The relative distance between the notes in semitones
+     * @returns {int} The relative distance between the notes in semitones
      */
     relativeDistance: function( note1, note2 ){
         var rel = note2.toRelative().pos - note1.toRelative().pos;
@@ -143,7 +144,7 @@ var staticMethods = {
      *
      * @param {Note} note1 - The first note
      * @param {Note} note2 - The second note
-     * @returns {integer} the shortest distance from note1 to note2
+     * @returns {int} the shortest distance from note1 to note2
      *
      * @todo - implement function
      *
@@ -153,7 +154,7 @@ var staticMethods = {
     },
 
     /**
-     * @returns {integer} the shortest relative distance
+     * @returns {int} the shortest relative distance
      *
      * @todo - implement function
      */
@@ -180,12 +181,12 @@ var staticMethods = {
      *
      * @param {Note} note - a Note object
      *
-     * @returns {integer}   The signature as an integer representing the amount
+     * @returns {int}   The signature as an integer representing the amount
      *                      of sharps or flats the scale has when using this
      *                      note as root.
      */
     signature: function( note ){
-        return MUSIQ.signatures[note.toRelative().pos];
+        return defs.signatures[note.toRelative().pos];
     },
 
     /**
@@ -193,11 +194,11 @@ var staticMethods = {
      *
      * @param {Note} note - a Note object
      *
-     * @returns {integer}   the position on the circle of fifths as an integer
+     * @returns {int}   the position on the circle of fifths as an integer
      *                      ( C = 0, G = 1, D = 2, ... F = -1 )
      */
     cofPosition: function( note ){
-        return MUSIQ.cofPositions[note.toRelative().pos];
+        return defs.cofPositions[note.toRelative().pos];
     },
 
     /**
@@ -207,7 +208,7 @@ var staticMethods = {
      * flats, instead of b or #
      *
      * @param {Note} note - A Note object
-     * @param {integer} signature - the amount of sharps of flats
+     * @param {int} signature - the amount of sharps of flats
      *                              (0 = no sharps / flats, 1 = 1 sharp, -1 = 1 flat, etc.)
      *
      * @returns {string} the notation used based on the
@@ -218,9 +219,9 @@ var staticMethods = {
         var ret = "";
 
         if( Note.signatureIsFlat( signature ) ){
-            ret = MUSIQ.flatNames[note.relPos()] + (!note.relative ? note.octave() : "");
+            ret = defs.flatNames[note.relPos()] + (!note.relative ? note.octave() : "");
         } else {
-            ret = MUSIQ.sharpNames[note.relPos()] + (!note.relative ? note.octave() : "");
+            ret = defs.sharpNames[note.relPos()] + (!note.relative ? note.octave() : "");
         }
 
         // experimental : replace b with ♭ and # with ♯
@@ -233,7 +234,7 @@ var staticMethods = {
      * get a simple notation for a note, i.e. C#
      *
      * @param {Note} note - A note object
-     * @param {integer} signature - the amount of sharps of flats
+     * @param {int} signature - the amount of sharps of flats
      *                              (0 = no sharps / flats, 1 = 1 sharp, -1 = 1 flat, etc.)
      *
      * @returns {string}
@@ -246,9 +247,9 @@ var staticMethods = {
         if( !(note instanceof Note) ) n = new Note(note);
 
         if( Note.signatureIsFlat( signature ) ){
-            ret = MUSIQ.flatNames[n.relPos()];
+            ret = defs.flatNames[n.relPos()];
         } else {
-            ret = MUSIQ.sharpNames[n.relPos()];
+            ret = defs.sharpNames[n.relPos()];
         }
 
         // experimental : replace b with ♭ and # with ♯
@@ -259,15 +260,15 @@ var staticMethods = {
     /**
      * checks if a signature is flat
      *
-     * @param {boolean|integer} signature - the signature ( if an integer, )
+     * @param {boolean|int} signature - the signature ( if an integer, )
      *
      * @returns {boolean} true if the signature is flat (one or more b)
      */
     signatureIsFlat: function( signature ){
         //var sig = 0;
-        if( typeof signature == "undefined")
+        if(_.isUndefined(signature))
             return false; // default to C (no sharps or flats)
-        else if( _(signature).isBoolean() )
+        else if( _.isBoolean(signature) )
             return signature; // if signature is a boolean
         else
             return signature < 0;
@@ -282,9 +283,9 @@ var staticMethods = {
      */
     transpose: function( note, interval ){
         // check if it's an interval object
-        if( _( interval ).isNumber() ){
+        if( _.isNumber(interval) ){
             return new Note(note.pos + interval);
-        } else if(_( interval ).isString() ) {
+        } else if(_.isString(interval) ) {
             return new Note(note.pos + Interval.fromName(interval).distance);
         } else {
             // let's hope it's an interval object
@@ -304,7 +305,7 @@ var notePrototype = {
      * calculates the distance from this note to the specified note
      *
      * @param {Note} note - the note to calculate the distance to
-     * @returns {integer}   the distance from this note to the note in semitones
+     * @returns {int}   the distance from this note to the note in semitones
      */
     distance: function( note ){
         return Note.distance( this, note );
@@ -318,7 +319,7 @@ var notePrototype = {
      *
      * @param {Note} note - The second note
      *
-     * @returns {integer} The relative distance between the notes in semitones
+     * @returns {int} The relative distance between the notes in semitones
      */
     relativeDistance: function( note ){
         return Note.relativeDistance( this, note);
@@ -327,7 +328,7 @@ var notePrototype = {
     /**
      *
      * @param {Note} note - The second note
-     * @returns {integer} the shortest distance from this to note
+     * @returns {int} the shortest distance from this to note
      *
      */
     shortestDistance: function( note ){
@@ -350,7 +351,7 @@ var notePrototype = {
      * of sharps or flats the scale has when using this
      * note as root.
      *
-     * @returns {integer}   The signature as an integer representing the amount
+     * @returns {int}   The signature as an integer representing the amount
      *                      of sharps or flats the scale has when using this
      *                      note as root.
      */
@@ -362,7 +363,7 @@ var notePrototype = {
      * the Note's position on the circle of fifths
      *
      *
-     * @returns {integer}   the position on the circle of fifths as an integer
+     * @returns {int}   the position on the circle of fifths as an integer
      *                      ( C = 0, G = 1, D = 2, ... F = -1 )
      */
     cofPosition: function() {
@@ -375,7 +376,7 @@ var notePrototype = {
      * In the end, we use the unicode characters ♭ and ♯ to represent sharps and
      * flats, instead of b or #
      *
-     * @param {integer} signature - the amount of sharps of flats
+     * @param {int} signature - the amount of sharps of flats
      *                              (0 = no sharps / flats, 1 = 1 sharp, -1 = 1 flat, etc.)
      *
      * @returns {string} the notation used based on the
@@ -387,7 +388,7 @@ var notePrototype = {
     /**
      * get a simple notation for a note, i.e. C#
      *
-     * @param {integer} signature - the amount of sharps of flats
+     * @param {int} signature - the amount of sharps of flats
      *                              (0 = no sharps / flats, 1 = 1 sharp, -1 = 1 flat, etc.)
      *
      * @returns {string}
@@ -404,13 +405,13 @@ var notePrototype = {
      * @returns {boolean} true if the note can be described by this name
      */
     hasName: function( name ){
-        return Note.fromNotation(name) && this.relPos() == Note.fromNotation(name).relPos();
+        return Note.fromNotation(name) && this.relPos() === Note.fromNotation(name).relPos();
     },
 
     /**
      * the octave the note is in
      *
-     * @returns {integer} the octave
+     * @returns {int} the octave
      */
     octave: function( ){
         return Math.floor(this.pos/12);
@@ -428,7 +429,7 @@ var notePrototype = {
     /**
      * get the relative position of the note
      *
-     * @returns {integer} the relative position ( 0 - 11 )
+     * @returns {int} the relative position ( 0 - 11 )
      */
     relPos: function(){
         return this.relative ? this.pos : this.toRelative().pos;
