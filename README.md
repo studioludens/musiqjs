@@ -1,4 +1,4 @@
-MUSIQ.js
+musiq.js
 ========
 
 #### A music analysis library for javascript ####
@@ -20,7 +20,7 @@ production.
 Getting Started
 ---------------
 
-Take a look at the MUSIQ.js primer. 
+Take a look at the musiq.js primer. 
 
 Testing
 -------
