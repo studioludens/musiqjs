@@ -12,7 +12,7 @@
  * @param {string} [type=chord] - the type of chord, 
  */
 
-var Chord = function( notes, descriptor, tonic, relative, type ) {
+var Chord = function Chord( notes, descriptor, tonic, relative, type ) {
     
     if( descriptor.hasOwnProperty( 'names') ){
         // notes in relative position
@@ -49,7 +49,7 @@ var Chord = function( notes, descriptor, tonic, relative, type ) {
  * 
  * @returns {Chord}
  */
-Chord.fromNotation = function( name, type ){
+Chord.fromNotation = function fromNotation( name, type ){
     
     // check if it's a valid notation, at least the note part
     var matches;
@@ -138,7 +138,7 @@ Chord.fromNotation = function( name, type ){
  * 
  * @returns {Chord} a matching chord, null when nothing is found
  */
-Chord.fromNotes = function( notes, inversion ){
+Chord.fromNotes = function fromNotes( notes, inversion ){
     
     var matches = Chords.fromNotes( notes, inversion );
     if( matches && matches.length > 0 ){
@@ -156,7 +156,7 @@ Chord.fromNotes = function( notes, inversion ){
  * @param {Note} note - a Note object
  * @returns {boolean} true when the Chord contains the specific note
  */
-Chord.contains = function(chord, note){
+Chord.contains = function contains(chord, note){
     if( chord.relative ){
         return _(chord.relNotes).contains(note.relPos());
     } else {
@@ -179,7 +179,7 @@ Chord.contains = function(chord, note){
  * @param {integer} signature - the signature of the note
  * @returns {string} - the chord notation as it is most commonly used
  */
-Chord.prototype.notation = function( signature ) {
+Chord.prototype.notation = function notation( signature ) {
     if( this.abstr ){
         return this.names[0].replace("b","♭").replace("#","♯");;
     } else {
@@ -192,7 +192,7 @@ Chord.prototype.notation = function( signature ) {
  * 
  * @param {integer} signature - the signature of the note
  */
-Chord.prototype.longNotation = function( signature ) {
+Chord.prototype.longNotation = function longNotation( signature ) {
     if( this.abstr ){
         return this.longName.replace("b","♭").replace("#","♯");;
     } else {
@@ -207,7 +207,7 @@ Chord.prototype.longNotation = function( signature ) {
  * @param {Interval} interval - an Interval object
  * 
  */
-Chord.prototype.transpose = function(interval) {
+Chord.prototype.transpose = function transpose(interval) {
     // TODO; implement method
     // transpose notes
     this.notes = _(this.notes).map(function(note){

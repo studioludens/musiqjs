@@ -6,8 +6,8 @@
   
   "dependencies": {
     "jsdoc": "3.2.0-dev",
-    "node-static":">=0.6.7",
-    "node-minify":">=0.7.2"
+    "node-static":"~0.7.7",
+    "node-minify":"~0.7.2"
   },
   
   "scripts": {
@@ -21,7 +21,7 @@
     "url": "https://github.com/studioludens/musiqjs.git"
   },
   "engines": {
-    "node": "0.8.x",
+    "node": "0.12.x",
     "npm": "1.1.x"
   },
   

@@ -27,7 +27,7 @@ require('http').createServer(function (request, response) {
                 response.end();
             }
         });
-    });
+    }).resume();
 }).listen(process.env.PORT);  
 
 util.puts("Server Running on " + process.env.PORT);  
