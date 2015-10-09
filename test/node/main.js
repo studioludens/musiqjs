@@ -1,8 +1,8 @@
-var MUSIQ = require('../../src/MUSIQ'),
-    Note = require('../../src/Note'),
-    Chord = require('../../src/Chord'),
+var MUSIQ    = require('../../src/MUSIQ'),
+    Note     = require('../../src/Note'),
+    Chord    = require('../../src/Chord'),
     Interval = require('../../src/Interval'),
-    Guitar = require('../../src/guitar/Guitar');
+    Guitar   = require('../../src/guitar/Guitar');
 
 // NOTES
 
