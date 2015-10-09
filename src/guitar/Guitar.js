@@ -1,7 +1,7 @@
 'use strict';
 
 var _            = require('lodash'),
-    MUSIQ        = require('../MUSIQ'),
+    MUSIQ        = require('../base'),
     Chord        = require('../Chord'),
     Chords       = require('../Chords'),
     GuitarFret   = require('./GuitarFret'),

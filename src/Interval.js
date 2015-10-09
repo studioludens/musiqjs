@@ -1,6 +1,6 @@
 'use strict';
 
-var MUSIQ = require('./MUSIQ');
+var MUSIQ = require('./base');
 
 module.exports = Interval;
 

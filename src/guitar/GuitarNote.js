@@ -19,6 +19,7 @@ GuitarNote.prototype.notePos            = notePos;
 GuitarNote.prototype.relPos             = relativeNotePos;
 GuitarNote.prototype.relativeNotePos    = relativeNotePos;
 GuitarNote.prototype.distanceTo         = distanceTo;
+GuitarNote.prototype.toString           = toString;
 //
 /** 
  * the guitar note data object
@@ -211,4 +212,8 @@ function relativeNotePos(){
  */
 function distanceTo( otherNote ){
     return [ otherNote.pos[0] - this.pos[0], otherNote.pos[1] - this.pos[1] ];
+}
+
+function toString (){
+    return '[GuitarNote ' + this.note.toString() + ']';
 }

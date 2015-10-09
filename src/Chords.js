@@ -1,5 +1,5 @@
 var _     = require('lodash'),
-    MUSIQ = require('./MUSIQ'),
+    MUSIQ = require('./base'),
     Chord = require('./Chord'),
     Note  = require('./Note');
 /**

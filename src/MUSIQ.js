@@ -1,22 +1,32 @@
 'use strict';
 
 var _ = require('lodash'),
-    base = require('./base');
-
+    base = require('./base'),
+    Note = require('./Note'),
+    Chord = require('./Chord'),
+    Chords = require('./Chords'),
+    Scale = require('./Scale'),
+    Interval = require('./Interval'),
+    Guitar = require('./guitar/Guitar');
 
 var MUSIQ = base;
 
 module.exports = MUSIQ;
 
 MUSIQ.match             = match;
-MUSIQ.isValidNote       = isValidNote;
-MUSIQ.isValidNoteList   = isValidNoteList;
-MUSIQ.isValidChord      = isValidChord;
-MUSIQ.isValidChordList  = isValidChordList;
-MUSIQ.isValidScale      = isValidScale;
-MUSIQ.isValidScaleList  = isValidScaleList;
+MUSIQ.isValidNote       = Note.isValidNote;
+MUSIQ.isValidNoteList   = Note.isValidNoteList;
+MUSIQ.isValidChord      = Chord.isValidChord;
+MUSIQ.isValidChordList  = Chord.isValidChordList;
+MUSIQ.isValidScale      = Scale.isValidScale;
+MUSIQ.isValidScaleList  = Scale.isValidScaleList;
 
-MUSIQ.guitar = {};
+MUSIQ.note              = note;
+MUSIQ.scale             = scale;
+MUSIQ.chord             = chord;
+MUSIQ.interval          = interval;
+
+MUSIQ.guitar            = guitar;
 MUSIQ.guitar.isValidFingerPos = isValidFingerPos;
 MUSIQ.guitar.isValidChord = isValidGuitarChord;
 
@@ -32,8 +42,7 @@ MUSIQ.guitar.isValidChord = isValidGuitarChord;
  * @returns {array} - an array of match objects (Note/Scale/Chord)
  */
 function match( name ){
-    
-    
+
     var ret = [];
     
     if( MUSIQ.isValidNote( name )){
@@ -55,130 +64,10 @@ function match( name ){
         ret.push( Chords.fromNotation( name, 'scale' ) );
     }
     
-    console.log( "MusiQ MAtch: " + name)
-    console.log( ret )
+    //console.log( "MUSIQ Match: " + name);
+    //console.log( ret );
     
     return ret;
-}
-
-
-/**
- * isValidNote
- * 
- * @param {string} notation - a string notation for a note
- * 
- * @returns {boolean} true if the note can be parsed into a Note object
- */
-function isValidNote( notation ){
-    
-    if( !notation ) return false;
-    
-    var regex = new RegExp("^" + MUSIQ.NOTE_REGEX + "?$","m");
-    return regex.exec( notation );
-    
-}
-
-/**
- * 
- * @param {array} list
- * @returns {boolean} true if the list (in string format) is a valid list
- * we can use thesse delimiters:  " " (space), "," (comma) and "|" (pipe)
- * more probably to follow...
- * 
- * @todo: implement this function
- * 
- */
-function isValidNoteList( list ){
-   // split the list 
-   return false;
-}
-
-/**
- * 
- * @todo: store these in a static variable when the function is first called
- * 
- * @param {string} notation - string notation to check if valid
- * 
- * @returns {array} matches from the regular expression if it's a valid chord
- *              0 : the whole matched name
- *              1 : the note
- *              2 : any specified accidentals
- *              3 : chord indicator / name
- */
-function isValidChord( notation ){
-    
-    if( !notation) return false;
-    
-    // default to major
-    var not = notation;
-    if( !notation || notation.length == 0 ) not = "M";
-    
-    // TODO: make this shorter
-    /*
-    var chordNames = 
-       _.chain(MUSIQ.chords)
-        .pluck("longname")
-        .union( 
-            _.pluck(MUSIQ.chords, "names") )
-        .value()
-        .join("|");
-    */
-    
-    var chordNames = _.reduce(MUSIQ.chords, function(memo, item){
-        var m = _.isString(memo) ? memo : memo.names.join("|") + "|" + memo.longName;
-        //console.log(m);
-        return m + "|" + item.names.join("|") + "|" + item.longName;
-    });
-    
-    var regex = new RegExp("^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ chordNames + ")? ?" + MUSIQ.CHORD_REGEX + "$","m");
-    //console.log( regex );
-    return regex.exec( not );
-}
-
-/**
- * @param {array} list - list of strings with chord names
- * @returns {boolean} true if all chords are valid
- * 
- * @todo - implement function
- */
-function isValidChordList( list ){
-    // check if the chord name is valid
-    return false;
-}
-
-/**
- * 
- * @param {string} notation - 
- * @returns {boolean} true if it's a valid scale
- */
-function isValidScale( notation ){
-    
-    if( !notation) return false;
-    
-    // default to major
-    var not = notation;
-    if( !notation || notation.length === 0 ) not = "M";
-    
-    // TODO: make this shorter
-    
-    var scaleNames = _.reduce(MUSIQ.scales, function(memo, item){
-        var m = _.isString(memo) ? memo : memo.names.join("|");
-        //console.log(m);
-        return m + "|" + item.names.join("|");
-    });
-    
-    var regex = new RegExp("^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ scaleNames + ")? ?" + MUSIQ.SCALE_REGEX + "$","m");
-    return regex.exec( not );
-}
-
-/**
- * @returns {boolean} true if
- * 
- * @todo implement function
- */
-function isValidScaleList( chord ){
-    // check if the scale name is valid
-    return false;
 }
 
 /**
@@ -205,4 +94,29 @@ function isValidFingerPos( tab ){
  */
 function isValidGuitarChord( chord ){
     
+}
+
+/**
+ * create a note object from a notation
+ * @param notation
+ * @returns {Note}
+ */
+function note (notation){
+    return Note.fromNotation(notation);
+}
+
+function chord (notation){
+    return Chord.fromNotation(notation);
+}
+
+function interval (note1, note2){
+    return Interval.fromNotes(note1, note2);
+}
+
+function scale (notation){
+    return Scale.fromNotation(notation);
+}
+
+function guitar (tuning){
+    return new Guitar(tuning);
 }

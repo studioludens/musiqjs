@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('lodash'),
-    MUSIQ = require('./MUSIQ'),
+    MUSIQ = require('./base'),
     Interval = require('./Interval');
 
 module.exports = Note;
@@ -19,6 +19,8 @@ Note.notation                   = notation;
 Note.simpleNotation             = simpleNotation;
 Note.signatureIsFlat            = signatureIsFlat;
 Note.transpose                  = transpose;
+Note.isValidNote                = isValidNote;
+Note.isValidNoteList            = isValidNoteList;
 
 Note.prototype.distance         = protoDistance;
 Note.prototype.relativeDistance = protoRelativeDistance;
@@ -76,7 +78,7 @@ function fromNotation( notation ){
     // split the notation
     if( !notation ) return;
     
-    var matches = MUSIQ.isValidNote( notation );
+    var matches = isValidNote( notation );
     
     //console.log( "Note.fromNotation matches : " + notation );
     //console.log( matches );
@@ -503,12 +505,33 @@ function protoFrequency(){
 }
 
 /**
- * creates a note object from a notation. This is the same as saying
- * Note.fromNotation( )
- * @param {String} notation - a string notation of the note
- * 
- * @returns {Note}
+ * isValidNote
+ *
+ * @param {string} notation - a string notation for a note
+ *
+ * @returns {boolean} true if the note can be parsed into a Note object
  */
-function note( notation ){
-    return Note.fromNotation( notation );
+function isValidNote( notation ){
+
+    if( !notation ) return false;
+
+    var regex = new RegExp("^" + MUSIQ.NOTE_REGEX + "?$","m");
+    return regex.exec( notation );
+
+}
+
+/**
+ *
+ * @param {array} list
+ * @returns {boolean} true if the list (in string format) is a valid list
+ * we can use thesse delimiters:  " " (space), "," (comma) and "|" (pipe)
+ * more probably to follow...
+ *
+ * @todo: implement this function
+ *
+ */
+function isValidNoteList( list ){
+    throw new Error('not implemented');
+    // split the list
+    return false;
 }

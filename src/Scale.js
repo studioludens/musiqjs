@@ -15,6 +15,9 @@
  */
 var Scale = {}; //_(Chord).extend();
 
+Scale.isValidScale = isValidScale;
+Scale.isValidScaleList = isValidScaleList;
+
 module.exports = Scale;
 
 /**
@@ -35,3 +38,39 @@ Scale.extend = function( startOctave, endOctave ){
 /*Scale.prototype.type = function(){
     return "scale";
 }*/
+
+/**
+ *
+ * @param {string} notation -
+ * @returns {boolean} true if it's a valid scale
+ */
+function isValidScale( notation ){
+
+    if( !notation) return false;
+
+    // default to major
+    var not = notation;
+    if( !notation || notation.length === 0 ) not = "M";
+
+    // TODO: make this shorter
+
+    var scaleNames = _.reduce(MUSIQ.scales, function(memo, item){
+        var m = _.isString(memo) ? memo : memo.names.join("|");
+        //console.log(m);
+        return m + "|" + item.names.join("|");
+    });
+
+    var regex = new RegExp("^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ scaleNames + ")? ?" + MUSIQ.SCALE_REGEX + "$","m");
+    return regex.exec( not );
+}
+
+/**
+ * @returns {boolean} true if
+ *
+ * @todo implement function
+ */
+function isValidScaleList( chord ){
+    throw new Error('not implemented');
+    // check if the scale name is valid
+    return false;
+}

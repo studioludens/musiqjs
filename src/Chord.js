@@ -1,14 +1,17 @@
 'use strict';
 
 var _     = require('lodash'),
-    MUSIQ = require('./MUSIQ'),
-    Note  = require('./Note');
+    MUSIQ = require('./base'),
+    Note  = require('./Note'),
+    Scale = require('./Scale');
 
 module.exports = Chord;
 
 Chord.fromNotation              = fromNotation;
 Chord.fromNotes                 = fromNotes;
 Chord.contains                  = contains;
+Chord.isValidChord              = isValidChord;
+Chord.isValidChordList          = isValidChordList;
 
 Chord.prototype.notation        = notation;
 Chord.prototype.longNotation    = longNotation;
@@ -80,13 +83,13 @@ function fromNotation( name, type ){
     var chordType = "";
     
     if( type == 'scale'){
-        matches = MUSIQ.isValidScale( name );
+        matches = Scale.isValidScale( name );
         lookup = MUSIQ.scales;
         chordType = 'scale';
         //console.log("Checking Scale");
     } else {
         // default to chord
-        matches = MUSIQ.isValidChord( name );
+        matches = isValidChord( name );
         lookup = MUSIQ.chords;
         chordType = 'chord';
         //console.log("Checking Chord");
@@ -268,7 +271,7 @@ function noteObjects(){
 function hasName(name){
     
     // split it between the note and the chord type indicator
-    var matches = MUSIQ.isValidChord( name );
+    var matches = isValidChord( name );
     
     //console.log( matches );
     // if the name is not even valid, return false
@@ -342,14 +345,56 @@ function protoContains( note ){
     return Chord.contains( this, note );
 }
 
+/**
+ *
+ * @todo: store these in a static variable when the function is first called
+ *
+ * @param {string} notation - string notation to check if valid
+ *
+ * @returns {array} matches from the regular expression if it's a valid chord
+ *              0 : the whole matched name
+ *              1 : the note
+ *              2 : any specified accidentals
+ *              3 : chord indicator / name
+ */
+function isValidChord( notation ){
+
+    if( !notation) return false;
+
+    // default to major
+    var not = notation;
+    if( !notation || notation.length == 0 ) not = "M";
+
+    // TODO: make this shorter
+    /*
+     var chordNames =
+     _.chain(MUSIQ.chords)
+     .pluck("longname")
+     .union(
+     _.pluck(MUSIQ.chords, "names") )
+     .value()
+     .join("|");
+     */
+
+    var chordNames = _.reduce(MUSIQ.chords, function(memo, item){
+        var m = _.isString(memo) ? memo : memo.names.join("|") + "|" + memo.longName;
+        //console.log(m);
+        return m + "|" + item.names.join("|") + "|" + item.longName;
+    });
+
+    var regex = new RegExp("^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ chordNames + ")? ?" + MUSIQ.CHORD_REGEX + "$","m");
+    //console.log( regex );
+    return regex.exec( not );
+}
 
 /**
- * shortcut function to create a new chord based on Chord.fromNotation()
- * 
- * @param {string} name - the name of the chord
- * 
- * @returns {Chord}
+ * @param {array} list - list of strings with chord names
+ * @returns {boolean} true if all chords are valid
+ *
+ * @todo - implement function
  */
-function chord( name ){
-    return Chord.fromNotation(name );
+function isValidChordList( list ){
+    throw new Error('not implemented');
+    // check if the chord name is valid
+    return false;
 }
