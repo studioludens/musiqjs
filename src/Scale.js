@@ -15,6 +15,8 @@
  */
 var Scale = {}; //_(Chord).extend();
 
+module.exports = Scale;
+
 /**
  * create a scale from a tonic note and a type
  */

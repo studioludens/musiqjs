@@ -1,4 +1,11 @@
 'use strict';
+
+module.exports = GuitarFret;
+
+GuitarFret.prototype.className = className;
+GuitarFret.prototype.notes = notes;
+
+//
 /**
  * GuitarFret - describes a guitar fret
  * 
@@ -13,7 +20,7 @@
  * the fret automatically calculates a number of useful variables
  * 
  */
-var GuitarFret = function( guitar, pos ){
+function GuitarFret( guitar, pos ){
     
     this.guitar = guitar;
     this.pos    = pos;
@@ -30,9 +37,9 @@ var GuitarFret = function( guitar, pos ){
  * 
  * @returns {array} - Array of GuitarNote objects
  */
-GuitarFret.prototype.notes = function(){
+function notes(){
     return this.guitar.notesOnFret( this.pos );
-};
+}
 
 
 /**
@@ -41,7 +48,7 @@ GuitarFret.prototype.notes = function(){
  * 
  * @returns {string} - 
  */
-GuitarFret.prototype.className = function(){
+function className(){
     //console.log(this.pos);
     if( this.pos == 3) return "third";
     if( this.pos == 5) return "fifth";
@@ -50,5 +57,5 @@ GuitarFret.prototype.className = function(){
     if( this.pos == 12 ) return "twelfth";
     
     return;
-};
+}
 

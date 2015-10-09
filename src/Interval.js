@@ -1,5 +1,15 @@
 'use strict';
-/**
+
+var MUSIQ = require('./MUSIQ');
+
+module.exports = Interval;
+
+Interval.fromName = fromName;
+Interval.fromNotes = fromNotes;
+Interval.prototype.name = name;
+Interval.prototype.toString = name;
+
+    /**
  * 
  * data structure for an interval
  * 
@@ -7,22 +17,21 @@
  * 
  * @param {integer} distance - The number of semitones between the notes
  */
-var Interval = function( distance ){
+function Interval( distance ){
     
     this.distance = distance;
     this.octaves = Math.floor(this.distance/12);
     this.relativeDistance = this.distance - this.octaves*12;
     
     //console.log(this.relativeDistance);
-
-};
+}
 
 /**
  * @returns {string} the name of the interval
  */
-Interval.prototype.name = function(){
+function name(){
         return MUSIQ.intervalNames[this.relativeDistance];
-};
+}
 
 /**
  * take two notes and create a new Interval object from it
@@ -32,10 +41,10 @@ Interval.prototype.name = function(){
  * 
  * @returns {Interval} A new Interval object
  */
-Interval.fromNotes = function( note1, note2 ){
+function fromNotes( note1, note2 ){
     return new Interval( note1.distance(note2) );
-};
-    
+}
+
 /**
  * lookup the english name of the interval
  * 
@@ -57,9 +66,9 @@ Interval.fromNotes = function( note1, note2 ){
    "octave"
  * 
  */
-Interval.fromName = function( name ){
+function fromName( name ){
     return new Interval( MUSIQ.intervalNames.indexOf( name ) );
-};
+}
 
 /**
  * creates an interval object, internally calls Interval.fromName()

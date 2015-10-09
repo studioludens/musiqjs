@@ -1,4 +1,15 @@
 'use strict';
+
+var _ = require('lodash');
+
+module.exports = GuitarChord;
+
+GuitarChord.fromChordAndBase = fromChordAndBase;
+GuitarChord.fromChord = fromChord;
+
+GuitarChord.prototype.valid = valid;
+GuitarChord.prototype.barre = barre;
+//
 /**
  * GuitarChord - a class for representing a guitar chord
  * 
@@ -10,7 +21,7 @@
  * @param {array}  notes - a collection of GuitarNote objects (optional)
  */
 
-var GuitarChord = function( guitar, chord, notes  ){
+function GuitarChord( guitar, chord, notes  ){
     
     this.guitar = guitar;
     this.chord = chord;
@@ -47,7 +58,7 @@ var GuitarChord = function( guitar, chord, notes  ){
      * 4 : pinky
      */
     var fingersUsed = [ false, false, false, false, false];
-};
+}
 
 /**
  * maximum finger stretch
@@ -71,7 +82,7 @@ GuitarChord.MAX_STRETCH = 3;
  * 
  * @returns {array} an array of GuitarChord objects
  */
-GuitarChord.fromChordAndBase = function( guitar, chord, base ){
+function fromChordAndBase( guitar, chord, base ){
     
     // from the base, walk up the neck, fret by fret
     
@@ -107,12 +118,12 @@ GuitarChord.fromChordAndBase = function( guitar, chord, base ){
     
     for( var i = baseString+1; i < guitar.strings.length ; i++){
         // get all notes on the string that match the chord 
-        var stringNotes = _(guitar.notes[i]).filter(function(note){
-            return _(chordNotes).contains(note.relPos());
+        var stringNotes = _.filter(guitar.notes[i], function(note){
+            return _.contains(chordNotes, note.relPos());
         });
 
         // and are close enough to the base note
-        stringNotes = _(stringNotes).filter(function(note){
+        stringNotes = _.filter(stringNotes, function(note){
             if( Math.abs( note.distanceTo(base)[1] ) <= GuitarChord.MAX_STRETCH ){
                 //console.log("Found note " + note.simple() + " on pos [" + note.pos + "]");
                 return true;
@@ -176,7 +187,7 @@ GuitarChord.fromChordAndBase = function( guitar, chord, base ){
     STEP 3:
     filter out the chords that don't have all notes
     */
-    var matches = _(matches).filter(function(match){
+    var matches = _.filter(matches, function(match){
         
         // make a copy for reference
         var remainingNotes = chord.relNotes.slice();
@@ -184,13 +195,13 @@ GuitarChord.fromChordAndBase = function( guitar, chord, base ){
         
         
         // get an array of relative positions
-        var relNotes = _(match).map(function(note){
+        var relNotes = _.map(match, function(note){
             return note.relPos();
             
         });
         //console.log("relnotes: ", relNotes);
-        //console.log( _(remainingNotes).difference(relNotes).length );
-        return _(remainingNotes).difference(relNotes).length == 0;
+        //console.log( _.difference(remainingNotes, relNotes).length );
+        return _.difference(remainingNotes, relNotes).length == 0;
     });
     
     console.log("STEP 3 - # of matches");
@@ -200,15 +211,15 @@ GuitarChord.fromChordAndBase = function( guitar, chord, base ){
     STEP 4:
     filter out the chords where the fingers are too far from each other
     */
-    var matches = _(matches).filter(function(match){
+    var matches = _.filter(matches, function(match){
         
         
-        var fretNrs = _(match).map(function(note){
+        var fretNrs = _.map(match, function(note){
             return note.fretPos();
         });
         
-        var lowestFret = _(fretNrs).min();
-        var highestFret = _(fretNrs).max();
+        var lowestFret = _.min(fretNrs);
+        var highestFret = _.max(fretNrs);
         
         // we remove all matches where the notes are too far apart
         if( Math.abs(lowestFret - highestFret) > GuitarChord.MAX_STRETCH )
@@ -234,7 +245,7 @@ GuitarChord.fromChordAndBase = function( guitar, chord, base ){
     
     // can we calculate this recursively
     return chordNotes;
-};
+}
 
 /**
  * finds all variations of a particular chord on the guitar neck
@@ -247,7 +258,7 @@ GuitarChord.fromChordAndBase = function( guitar, chord, base ){
  * 
  * @returns {GuitarChord}
  */
-GuitarChord.fromChord = function( guitar, chord ){
+function fromChord( guitar, chord ){
     
     if( !chord.relative ){
         console.warn("Relative chord not allowed!");
@@ -259,8 +270,8 @@ GuitarChord.fromChord = function( guitar, chord ){
     
     // we only have to check the bottom four strings
     
-    _(guitar.notes).each(function(string_notes, str_num){
-        _(string_notes).each(function(note, fret_num){
+    _.each(guitar.notes, function(string_notes, str_num){
+        _.each(string_notes, function(note, fret_num){
             //console.log(note);
             if( chord.contains(note.note) ){
                 //console.log(note);
@@ -272,11 +283,11 @@ GuitarChord.fromChord = function( guitar, chord ){
     console.log(baseNotes);
     
     // get all possible chord variations for each chord
-    return _.compact( _(baseNotes).map(function(base){
+    return _.compact( _.map(baseNotes, function(base){
         var guitarChord = GuitarChord.fromChordAndBase( guitar, chord, base );
         return guitarChord;
     }));
-};
+}
 
 /**
  * check if a guitar chord is valid
@@ -289,9 +300,9 @@ GuitarChord.fromChord = function( guitar, chord ){
  * 
  * @todo implement function
  */
-GuitarChord.prototype.valid = function(){
+function valid(){
     
-};
+}
 
 /**
  * barre - 
@@ -301,16 +312,16 @@ GuitarChord.prototype.valid = function(){
  * 
  * @todo test function
  */
-GuitarChord.prototype.barre = function(){
+function barre(){
     // check highest strings and recurse down, adding as we go
     var same = 0;
-    var lastFret = _(this.guitar.frets).last();
+    var lastFret = _.last(this.guitar.frets);
     
-    _(this.notes).pluck('fret').reverse().each(function(item){
+    _.pluck(this.notes, 'fret').reverse().each(function(item){
         if( item == lastFret ) same++;
     });
     
     console.log(same);
     return same;
     
-};
+}

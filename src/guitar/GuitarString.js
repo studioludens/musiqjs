@@ -1,4 +1,15 @@
 'use strict';
+
+var _ = require('lodash');
+
+module.exports = GuitarString;
+
+GuitarString.prototype.noteOnFret  = noteOnFret;
+GuitarString.prototype.matchNotes  = matchNotes;
+GuitarString.prototype.activeNotes = activeNotes;
+GuitarString.prototype.onlyActive  = onlyActive;
+
+//
 /** 
  * guitar string class
  * 
@@ -10,13 +21,13 @@
  * @param {integer} pos - the position of the string relative to the other strings
  */
 
-var GuitarString = function( guitar, pos, base ){
+function GuitarString( guitar, pos, base ){
     
     this.guitar = guitar;
     this.pos = pos;
     this.base = base;
     
-};
+}
 
 
 /**
@@ -24,9 +35,9 @@ var GuitarString = function( guitar, pos, base ){
  * 
  * @param {GuitarFret} fret - a GuitarFret object we should check the note on
  */
-GuitarString.prototype.noteOnFret = function( fret ){
+function noteOnFret( fret ){
     return this.guitar[this.pos][fret.pos];
-};
+}
 
 /**
  * matches a Note object to the fret and returns all GuitarNote objects that
@@ -35,8 +46,8 @@ GuitarString.prototype.noteOnFret = function( fret ){
  * @param {Note} note - a Note object
  * @todo implement function
  */
-GuitarString.prototype.matchNotes = function( note ){
-    
+function matchNotes( note ){
+    throw new Error('not implemented');
 };
 
 /**
@@ -46,9 +57,9 @@ GuitarString.prototype.matchNotes = function( note ){
  * 
  * @todo implement function
  */
-GuitarString.prototype.activeNotes = function( chord ){
-    return;
-};
+function activeNotes( chord ){
+    throw new Error('not implemented');
+}
 
 /**
  * set the note on the specified fret as the only active note on this string
@@ -58,9 +69,9 @@ GuitarString.prototype.activeNotes = function( chord ){
  * 
  * @returns {GuitarString} - return this GuitarString
  */
-GuitarString.prototype.onlyActive = function( fret, value ){
+function onlyActive( fret, value ){
     
-    _(this.guitar.notes[this.pos]).each(function(note, key){
+    _.each(this.guitar.notes[this.pos], function(note, key){
         if( key == fret )
             note.active(value);
         else
@@ -69,4 +80,4 @@ GuitarString.prototype.onlyActive = function( fret, value ){
     },this);
     
     return this;
-};
+}

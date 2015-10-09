@@ -1,4 +1,25 @@
 'use strict';
+
+var _ = require('lodash'),
+    Note = require('../Note');
+
+module.exports = GuitarNote;
+
+GuitarNote.prototype.notation           = notation;
+GuitarNote.prototype.simple             = simple;
+GuitarNote.prototype.active             = active;
+GuitarNote.prototype.tonic              = tonic;
+GuitarNote.prototype.ghosted            = ghosted;
+GuitarNote.prototype.fretPos            = fretPos;
+GuitarNote.prototype.stringPos          = stringPos;
+GuitarNote.prototype.onlyActive         = onlyActive;
+GuitarNote.prototype.className          = className;
+GuitarNote.prototype.intervalToTonic    = intervalToTonic;
+GuitarNote.prototype.notePos            = notePos;
+GuitarNote.prototype.relPos             = relativeNotePos;
+GuitarNote.prototype.relativeNotePos    = relativeNotePos;
+GuitarNote.prototype.distanceTo         = distanceTo;
+//
 /** 
  * the guitar note data object
  * 
@@ -16,7 +37,7 @@
  *                          tonic: false
  *                      
  */
-var GuitarNote = function( guitar, guitarString, fret, pos, state ){
+function GuitarNote( guitar, guitarString, fret, pos, state ){
 
     this.guitar = guitar;
     this.guitarString = guitarString;
@@ -33,7 +54,7 @@ var GuitarNote = function( guitar, guitarString, fret, pos, state ){
     this.note = new Note( guitarString.base + fret.pos );
 
     //console.log( this.note );
-};
+}
 
 /**
  * the default state of the guitar note. 
@@ -46,20 +67,20 @@ GuitarNote.DEFAULT_STATE = { active: false, ghosted: false, tonic: false };
  * 
  * @returns {string} the notation
  */
-GuitarNote.prototype.notation = function(){
+function notation(){
     return this.note.notation();
-};
+}
 
 /**
  * get the short notation
  * 
- * @param {integer} signature 
+ * @param {integer} signature
  * 
  * @returns {string} the Chord notation
  */
-GuitarNote.prototype.simple = function( signature ){
+function simple( signature ){
     return this.note.simpleNotation( signature );
-};
+}
 
 
 /**
@@ -68,14 +89,14 @@ GuitarNote.prototype.simple = function( signature ){
  * @param {boolean} value 
  * @returns {boolean} true if the state is active
  */
-GuitarNote.prototype.active = function( value ){
+function active( value ){
     if( typeof value != 'undefined'){
         this.state.active = value;
         return this.state.active;
     } else {
         return this.state.active;
     }
-};
+}
 
 /**
  * sets or gets the tonic state. 
@@ -83,14 +104,14 @@ GuitarNote.prototype.active = function( value ){
  * @param {Note} value - a Note object
  * @returns {boolean} true if the state is tonic
  */
-GuitarNote.prototype.tonic = function( value ){
+function tonic( value ){
     if( typeof value != 'undefined'){
         this.state.tonic = value;
         return this.state.tonic;
     } else {
         return this.state.tonic;
     }
-};
+}
 
 /**
  * sets or gets the active state. 
@@ -98,22 +119,22 @@ GuitarNote.prototype.tonic = function( value ){
  * @param {boolean} value
  * @returns {boolean} true if the state is active
  */
-GuitarNote.prototype.ghosted = function( value ){
-    if( typeof value != 'undefined'){
+function ghosted( value ){
+    if( typeof value !== 'undefined'){
         this.state.ghosted = value;
         return this.state.ghosted;
     } else {
         return this.state.ghosted;
     }
-};
+}
 
 /**
  * 
  * @returns {integer} - number of the fret this note is on
  */
-GuitarNote.prototype.fretPos = function(){
+function fretPos(){
     return this.pos[1];
-};
+}
 
 /**
  * 
@@ -121,9 +142,9 @@ GuitarNote.prototype.fretPos = function(){
  *                      0 is the lowest string (in standard Guitar tuning
  *                      this would be the low E)
  */
-GuitarNote.prototype.stringPos = function(){
+function stringPos(){
     return this.pos[0];
-};
+}
 
 /**
  * sets this note as the only active note on the string
@@ -131,9 +152,9 @@ GuitarNote.prototype.stringPos = function(){
  * @param {boolean} value - 
  * @returns {boolean} 
  */
-GuitarNote.prototype.onlyActive = function( value ){
+function onlyActive( value ){
     return this.guitarString.onlyActive( this.pos[1], value );
-};
+}
 
 /**
  * get a string representation of the class
@@ -141,7 +162,7 @@ GuitarNote.prototype.onlyActive = function( value ){
  * @param {Note} [tonic] optionally specify a tonic. If so, the interval to the tonic is added as well
  * @returns {string} 
  */
-GuitarNote.prototype.className = function( tonic ){
+function className( tonic ){
    var ret = [];
    if( this.state.active )  ret.push('active');
    if( this.state.ghosted ) ret.push('ghosted');
@@ -151,7 +172,7 @@ GuitarNote.prototype.className = function( tonic ){
    if( tonic ) ret.push(this.intervalToTonic(tonic).name().replace(" ","-"));
    
    return ret.join(' ');
-};
+}
 
 /**
  * the interval to the tonic
@@ -160,35 +181,34 @@ GuitarNote.prototype.className = function( tonic ){
  * 
  * @returns {Interval} an Interval object relative to the tonic
  */
-GuitarNote.prototype.intervalToTonic = function( tonic ){
+function intervalToTonic( tonic ){
     if( tonic )
         return tonic.interval( this.note );
-};
+}
 
 /**
  * get the int note position
  * 
  * @returns {integer} the MIDI position of the note
  */
-GuitarNote.prototype.notePos = function(){
+function notePos(){
     return this.note.pos;
-};
+}
 
 /**
  * get the relative note position
  * 
  * @returns {integer} the relative position of the note
  */
-GuitarNote.prototype.relPos =
-GuitarNote.prototype.relativeNotePos = function(){
+function relativeNotePos(){
     return this.note.toRelative().pos;
-};
+}
 
 /**
  * get the 'distance' of a fret to another note on the fretboard
  * @returns {array} an array with 2 elements [ strings, frets ]
  * 
  */
-GuitarNote.prototype.distanceTo = function( otherNote ){
+function distanceTo( otherNote ){
     return [ otherNote.pos[0] - this.pos[0], otherNote.pos[1] - this.pos[1] ];
-};
+}
