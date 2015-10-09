@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash'),
+var _    = require('lodash'),
     Note = require('../Note');
 
 module.exports = GuitarNote;

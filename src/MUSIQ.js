@@ -1,13 +1,13 @@
 'use strict';
 
-var _ = require('lodash'),
-    base = require('./base'),
-    Note = require('./Note'),
-    Chord = require('./Chord'),
-    Chords = require('./Chords'),
-    Scale = require('./Scale'),
+var _        = require('lodash'),
+    base     = require('./base'),
+    Note     = require('./Note'),
+    Chord    = require('./Chord'),
+    Chords   = require('./Chords'),
+    Scale    = require('./Scale'),
     Interval = require('./Interval'),
-    Guitar = require('./guitar/Guitar');
+    Guitar   = require('./guitar/Guitar');
 
 var MUSIQ = base;
 

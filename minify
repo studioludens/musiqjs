@@ -1,5 +1,0 @@
-#!/bin/sh
-# run a node process with the min.js file
-echo "Minifying Library..." 
-node min.js
-echo "Done!!"
