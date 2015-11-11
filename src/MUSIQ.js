@@ -36,25 +36,25 @@ MUSIQ.guitar.isValidChord = isValidGuitarChord;
  * the very powerful match() function takes a string
  * and tries to find all the matches, be it notes, chords
  * or scales.
- * 
+ *
  * @param {string} name - a name of a note, chord or scale
- * 
+ *
  * @returns {array} - an array of match objects (Note/Scale/Chord)
  */
 function match( name ){
 
     var ret = [];
-    
+
     if( MUSIQ.isValidNote( name )){
         console.log("Match single note");
        ret.push( Note.fromNotation(name) );
     }
-    
+
     if( MUSIQ.isValidNoteList( name ) ){
         console.log("Match multiple notes");
-        ret.concat( Note.fromNotation(name)); 
-    } 
-    
+        ret.concat( Note.fromNotation(name));
+    }
+
     if( MUSIQ.isValidChord( name )){
         console.log("Match single chord");
         ret.push( Chords.fromNotation( name ));
@@ -63,10 +63,10 @@ function match( name ){
         console.log("Match single scale");
         ret.push( Chords.fromNotation( name, 'scale' ) );
     }
-    
+
     //console.log( "MUSIQ Match: " + name);
     //console.log( ret );
-    
+
     return ret;
 }
 
@@ -78,9 +78,9 @@ function match( name ){
 /**
  * @returns {array} a list of matches if it's a valid finger position of the notes
  * currently played on a guitar neck
- * 
+ *
  * example: "0 2 2 1 0 x" - should get an E-chord
- * 
+ *
  */
 function isValidFingerPos( tab ){
     var regex = new RegExp("^((xX|[0-9]{1,2})[ -]*){6}$","m");
@@ -89,11 +89,11 @@ function isValidFingerPos( tab ){
 
 /**
  * @param {GuitarChord} chord - a GuitarChord object
- * 
+ *
  * @todo implement function
  */
 function isValidGuitarChord( chord ){
-    
+
 }
 
 /**
@@ -114,7 +114,7 @@ function interval (note1, note2){
 }
 
 function scale (notation){
-    return Scale.fromNotation(notation);
+    return Chord.fromNotation(notation, 'scale');
 }
 
 function guitar (tuning){

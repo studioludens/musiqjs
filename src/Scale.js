@@ -1,36 +1,53 @@
 'use strict';
+var _ = require('lodash'),
+    MUSIQ = require('./base');
+
 /**
  * the MUSIQ.js scale class
- * 
+ *
  * @class
- * 
+ *
  * @param notes - a simple array of integers representing the midi notes
  * @param descriptor - an object describing the scale
  * @param tonic - the current tonic Note oject
- * @param relative - if the scale should be interpreted as  relative, 
+ * @param relative - if the scale should be interpreted as  relative,
  *                   i.e. can be positioned anywhere
  *                   on the musical scale (Fretboard for guitar)
- * 
+ *
  * @todo implement some methods
  */
-var Scale = {}; //_(Chord).extend();
+module.exports = Scale;
 
 Scale.isValidScale = isValidScale;
 Scale.isValidScaleList = isValidScaleList;
+Scale.fromTonicAndType = fromTonicAndType
 
-module.exports = Scale;
+// extend chord
+Scale.prototype.extend = extend;
 
 /**
- * create a scale from a tonic note and a type
+ * the MUSIQjs Scale object constructor
+ *
+ * @param {string} type
  */
-Scale.fromTonicAndType = function( tonic, type ){
-    
+function Scale (tonic, type){
+    this.tonic = Note.fromNotation(tonic);
+    this.type = type;
+}
+
+
+/**
+ * create a scale from a tonic note and a type (optional)
+ */
+function fromTonicAndType( tonic, type ){
+    return new Scale();
+    // TODO
 };
 
 /**
  * extend a scale over a number of octaves
  */
-Scale.extend = function( startOctave, endOctave ){
+function extend( startOctave, endOctave ){
     this.startOctave = startOctave;
     this.endOctave = endOctave;
 };
@@ -60,8 +77,19 @@ function isValidScale( notation ){
         return m + "|" + item.names.join("|");
     });
 
-    var regex = new RegExp("^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ scaleNames + ")? ?" + MUSIQ.SCALE_REGEX + "$","m");
-    return regex.exec( not );
+    var scaleRegex = "^" + MUSIQ.NOTE_SIMPLE_REGEX + " ?("+ scaleNames + ")? ?" + MUSIQ.SCALE_REGEX + "$";
+    //console.log('scaleRegex', scaleRegex);
+
+    var regex = new RegExp(scaleRegex,"m");
+    var matches = regex.exec( not );
+
+    if(!matches) return;
+    return {
+        note : matches[1],
+        acc : matches[2],
+        notation : matches[3]
+    };
+
 }
 
 /**
