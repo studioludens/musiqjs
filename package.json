@@ -1,6 +1,6 @@
 {
   "name": "musiqjs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Alexander Rulkens <info@studioludens.com>",
   "description": "A Javascript library for note and music analysis",
   "dependencies": {
@@ -12,7 +12,8 @@
   "scripts": {
     "start": "node server.js",
     "predeploy": "echo Deploying MUSIQ.js test suite",
-    "postdeploy": "echo Deployment of MUSIQ.js test suite finished"
+    "postdeploy": "echo Deployment of MUSIQ.js test suite finished",
+    "test": "./node_modules/mocha/bin/mocha --reporter spec -w"
   },
   "repository": {
     "type": "git",
@@ -34,8 +35,14 @@
   "devDependencies": {
     "browserify": "^11.2.0",
     "browserify-shim": "^3.8.10",
+    "chai": "^3.4.1",
+    "chai-http": "^1.0.0",
     "gulp": "^3.9.0",
     "gulp-uglify": "^1.4.1",
+    "jasmine": "^2.3.2",
+    "jasmine-core": "^2.3.4",
+    "karma-coverage": "^0.5.3",
+    "mocha": "^2.3.3",
     "uglifyify": "^3.0.1",
     "vinyl-source-stream": "^1.1.0"
   }
