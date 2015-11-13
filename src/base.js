@@ -68,7 +68,7 @@ module.exports = {
     /**
      * solfege names
      */
-    solfege : ["do", "di", "re", "me","mi", "fa", "se", "sol", "le", "la", "te", "ti"],
+    solfege : ["do", "di", "re", "me", "mi", "fa", "se", "sol", "le", "la", "te", "ti"],
     /**
      * names of the intervals
      */
@@ -85,6 +85,14 @@ module.exports = {
         "minor seventh",
         "major seventh",
         "octave"
+    ],
+
+    intervalQualities : [
+        "perfect",
+        "minor",
+        "major",
+        "diminished",
+        "augmented"
     ],
 
     chordExtensionNotes : [1,2,8,9],
@@ -384,7 +392,7 @@ module.exports = {
     ],
 
     /** SOME REGULAR EXPRESSION MATCHES **/
-    NOTE_REGEX : "([A-G]|[a-g])(bbb|bb|b|#|##)? ?([0-9])? ?(n|no|not|note|notes)",
+    NOTE_REGEX : "([A-G]|[a-g])(bbb|bb|b|#|##|###)? ?([0-9])? ?(n|no|not|note|notes)",
     NOTE_SIMPLE_REGEX : "([A-G]|[a-g])(bbb|bb|b|#|##|###)?",
     SCALE_REGEX : "(s|sc|sca|scal|scale)?",
     CHORD_REGEX : "(c|ch|cho|chrd|chor|chord)?"

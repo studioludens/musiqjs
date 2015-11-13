@@ -1,13 +1,20 @@
 'use strict';
 
-var _ = require('lodash'),
-    MUSIQ = require('./base'),
+var _        = require('lodash'),
+    MUSIQ    = require('./base'),
     Interval = require('./Interval');
 
 module.exports = Note;
 
+Note.notation                   = notation;
+Note.simpleNotation             = simpleNotation;
+Note.solfege                    = solfege;
+// generator functions
 Note.fromNotation               = fromNotation;
 Note.fromPos                    = fromPos;
+Note.fromJSON                   = fromJSON;
+Note.fromObject                 = fromObject;
+// calculation functions
 Note.distance                   = distance;
 Note.relativeDistance           = relativeDistance;
 Note.shortestDistance           = shortestDistance;
@@ -15,26 +22,28 @@ Note.shortestRelativeDistance   = shortestRelativeDistance;
 Note.interval                   = interval;
 Note.signature                  = signature;
 Note.cofPosition                = cofPosition;
-Note.notation                   = notation;
-Note.simpleNotation             = simpleNotation;
-Note.signatureIsFlat            = signatureIsFlat;
 Note.transpose                  = transpose;
 Note.isValidNote                = isValidNote;
 Note.isValidNoteList            = isValidNoteList;
 
-Note.prototype.distance         = protoDistance;
-Note.prototype.relativeDistance = protoRelativeDistance;
-Note.prototype.shortestDistance = protoShortestDistance;
-Note.prototype.interval         = protoInterval;
-Note.prototype.signature        = protoSignature;
-Note.prototype.cofPosition      = protoCofPosition;
+// prototype methods
 Note.prototype.notation         = protoNotation;
 Note.prototype.simple           = protoSimpleNotation;
 Note.prototype.simpleNotation   = protoSimpleNotation;
+
+Note.prototype.distance         = protoDistance;
+Note.prototype.relativeDistance = protoRelativeDistance;
+Note.prototype.shortestDistance = protoShortestDistance;
+Note.prototype.shortestRelativeDistance = protoShortestRelativeDistance;
+Note.prototype.interval         = protoInterval;
+
+Note.prototype.signature        = protoSignature;
+Note.prototype.cofPosition      = protoCofPosition;
 Note.prototype.hasName          = protoHasName;
 Note.prototype.octave           = protoOctave;
 Note.prototype.toRelative       = protoToRelative;
 Note.prototype.rel              = protoToRelative;
+Note.prototype.toAbsolute       = protoToAbsolute;
 Note.prototype.relPos           = protoRelPos;
 Note.prototype.transpose        = protoTranspose;
 Note.prototype.type             = protoType;
@@ -50,13 +59,17 @@ Note.prototype.toString         = protoSimpleNotation;
  * @param {boolean} relative - a boolean, true if the note is relative (it doesn't have
  *                   an octave). if relative is true, pos should not be larger
  *                   than 12
+ * @param {integer} acc - the number of accidentals (-3 to 3), negative represents b (flats),
+ *                   positive represent # (sharps)
  */
-function Note( pos, relative ){
+function Note( pos, relative, acc ){
     this.pos = pos;
     this.relative = relative || false;
+    this.acc = acc || 0;
 
     // if the note is relative, decrease the position to fall inbetween
     // 0 <= pos < 12
+    // TODO: change this behaviour because it changes the pos variable
     if( this.relative ){
         this.pos = this.pos % 12;
     }
@@ -86,12 +99,13 @@ function fromNotation( notation ){
 
     // no chord found?
     if( !parsedNotation ){
-        console.warn("Note not found : " + notation);
+        //console.warn("Note not found : " + notation);
         return;
     }
 
     var note = parsedNotation.note;
-    var acc = (parsedNotation.acc || "").replace("♭","b").replace("♯","#");;
+     // it should support  b and ♭ for flats, # and ♯ for sharps
+    var acc = (parsedNotation.acc || "").replace("♭","b").replace("♯","#");
     var octave = +parsedNotation.octave || 0 ;
 
     // convert octave to integer, defaulting on 0 (if parsing fails)
@@ -115,7 +129,7 @@ function fromNotation( notation ){
     //console.log( npos );
 
     // get accidental position
-    var acc = MUSIQ.accidentals.indexOf( acc ) - 3;
+    acc = MUSIQ.accidentals.indexOf( acc ) - 3;
 
     // error case
     if( acc < -3 || typeof npos == 'undefined' || npos < 0 ){
@@ -130,7 +144,7 @@ function fromNotation( notation ){
         finalPos += 12;
     }
     // build the note together with the octave
-    ret = new Note( finalPos, relative );
+    ret = new Note( finalPos, relative, acc );
 
     return ret;
 
@@ -145,10 +159,28 @@ function fromNotation( notation ){
  */
 function fromPos( pos ){
     //console.log( pos );
-    return new Note( pos );
+    if(Number.isInteger(pos)){
+        return new Note( pos );
+    }
 }
 
+/**
+ * convert a JSON string into a Note object
+ * @param  {String} json [description]
+ * @return {Note}      [description]
+ */
+function fromJSON(json) {
+    return fromObject(JSON.parse(json));
+}
 
+/**
+ * convert a JS object into a note1
+ * @param  {} o Object
+ * @return {Note}   Note object
+ */
+function fromObject(o){
+    return new Note(o.pos, o.relative, o.acc);
+}
 /**
  * the distance (in semitones) to another note
  * this is the number notation of the interval
@@ -157,8 +189,10 @@ function fromPos( pos ){
  * @param {Note} note2 - The second note
  * @returns {integer} The distance between the notes in semitones
  */
-function distance( note1, note2 ){
-  return note2.pos - note1.pos;
+function distance (note1, note2) {
+    if (note1 instanceof Note && note2 instanceof Note) {
+        return note2.pos - note1.pos;
+    }
 }
 
 /**
@@ -172,9 +206,11 @@ function distance( note1, note2 ){
  *
  * @returns {integer} The relative distance between the notes in semitones
  */
-function relativeDistance( note1, note2 ){
-  var rel = note2.toRelative().pos - note1.toRelative().pos;
-  return ( rel < 0 ) ? rel + 12 : rel;
+function relativeDistance (note1, note2) {
+    if(!(note1 instanceof Note && note2 instanceof Note)) return;
+
+    var rel = note2.toRelative().pos - note1.toRelative().pos;
+    return ( rel < 0 ) ? rel + 12 : rel;
 }
 
 /**
@@ -183,11 +219,9 @@ function relativeDistance( note1, note2 ){
  * @param {Note} note2 - The second note
  * @returns {integer} the shortest distance from note1 to note2
  *
- * @todo - implement function
- *
  */
-function shortestDistance( note1, note2 ){
-    return 0;
+function shortestDistance (note1, note2) {
+    return Math.abs(distance(note1, note2));
 }
 
 /**
@@ -196,7 +230,7 @@ function shortestDistance( note1, note2 ){
  * @todo - implement function
  */
 function shortestRelativeDistance( note1, note2 ){
-    return 0;
+    return Math.min(relativeDistance(note1,note2), relativeDistance(note2, note1));
 }
 
 
@@ -207,8 +241,8 @@ function shortestRelativeDistance( note1, note2 ){
  * @param {Note} note2 - The second note
  * @returns {Interval} The interval between the notes
  */
-function interval( note1, note2 ){
-    return new Interval( Note.distance(note1, note2) );
+function interval(note1, note2){
+    return Interval.fromNotes(note1, note2);
 }
 
 /**
@@ -223,8 +257,8 @@ function interval( note1, note2 ){
  *                      of sharps or flats the scale has when using this
  *                      note as root.
  */
-function signature( note ){
-    return MUSIQ.signatures[note.toRelative().pos];
+function signature (note) {
+    return MUSIQ.signatures[note.relPos()];
 }
 
 /**
@@ -251,21 +285,10 @@ function cofPosition( note ){
  *
  * @returns {string} the notation used based on the
  */
-function notation( note, signature ){
-
-    // check flat
-    var ret = "";
-
-    if( Note.signatureIsFlat( signature ) ){
-        ret = MUSIQ.flatNames[note.relPos()] + (!note.relative ? note.octave() : "");
-    } else {
-        ret = MUSIQ.sharpNames[note.relPos()] + (!note.relative ? note.octave() : "");
-    }
-
-    // experimental : replace b with ♭ and # with ♯
-    // should probably check for unicode support?
-    return ret.replace("b","♭").replace("#","♯");
-
+function notation(note){
+    // octave
+    var oct = (!note.relative ? note.octave() : "");
+    return simpleNotation(note) + oct;
 }
 
 /**
@@ -277,44 +300,26 @@ function notation( note, signature ){
  *
  * @returns {string}
  */
-function simpleNotation( note, signature ){
+function simpleNotation(note){
+// index in the array
+    var i = (note.relPos() - note.acc + 12) % 12;
 
-   var n = note;
-   var ret;
-
-   if( !(note instanceof Note) ) n = new Note(note);
-
-   if( Note.signatureIsFlat( signature ) ){
-        ret = MUSIQ.flatNames[n.relPos()];
-    } else {
-        ret = MUSIQ.sharpNames[n.relPos()];
+    // get closest whole note
+    // get accidentals
+    if(note.acc < 0) {
+        return MUSIQ.flatNames[i] + 'b'.repeat(-note.acc);
     }
-
-    // experimental : replace b with ♭ and # with ♯
-    // should probably check for unicode support?
-    return ret.replace("b","♭").replace("#","♯");
+    return MUSIQ.sharpNames[i] + '#'.repeat(note.acc);
 }
 
 /**
- * checks if a signature is flat
- *
- * @param {boolean|integer} signature - the signature ( if an integer, )
- *
- * @returns {boolean}   True if the signature is flat (one or more b)
+ * returns the solfege for the note, i.e. C is do
+ * @param note
+ * @returns {String}
  */
-function signatureIsFlat( signature ){
-    //var sig = 0;
-    if( typeof signature == "undefined")
-        return false; // default to C (no sharps or flats)
-    else if( _.isBoolean(signature) )
-        return signature; // if signature is a boolean
-    else
-        return signature < 0;
-    // return true  if the signature is lower than 0
-
+function solfege (note){
+    return MUSIQ.solfege[note.relPos()];
 }
-
-
 
 /**
  * transpose a note with an interval
@@ -324,18 +329,17 @@ function signatureIsFlat( signature ){
 function transpose( note, interval ){
     // check if it's an interval object
     if( _.isNumber(interval) ){
-        return new Note(note.pos + interval);
+        return new Note(note.pos + interval, note.relative, note.acc);
     } else if(_.isString(interval) ) {
-        return new Note(note.pos + Interval.fromNotation(interval).distance);
+        return new Note(note.pos + Interval.fromNotation(interval).distance, note.relative, note.acc);
     } else if( interval instanceof Interval){
         // let's hope it's an interval object
-        return new Note(note.pos + interval.distance);
+        return new Note(note.pos + interval.distance, note.relative, note.acc);
     }
 }
 
-
 /*
- * class methods
+ * prototype methods
  */
 
 /**
@@ -344,9 +348,9 @@ function transpose( note, interval ){
  * @param {Note} note - the note to calculate the distance to
  * @returns {integer}   the distance from this note to the note in semitones
  */
-function protoDistance( note ){
+function protoDistance(note){
     return Note.distance( this, note );
-};
+}
 
 /**
  * returns the relative distance from this note to note
@@ -358,7 +362,7 @@ function protoDistance( note ){
  *
  * @returns {integer} The relative distance between the notes in semitones
  */
-function protoRelativeDistance( note ){
+function protoRelativeDistance(note){
     return Note.relativeDistance( this, note);
 }
 
@@ -368,18 +372,22 @@ function protoRelativeDistance( note ){
  * @returns {integer} the shortest distance from this to note
  *
  */
-function protoShortestDistance( note ){
-    return Note.shortestDistance( this, note);
+function protoShortestDistance (note) {
+    return Note.shortestDistance(this, note);
+}
+
+function protoShortestRelativeDistance(note){
+    return Note.shortestRelativeDistance(this, note);
 }
 
 /**
- * transpose the note with an interval
+ * get the interval between this note and another
  * @param {Interval} interval - An interval object
  *
  * @returns {Note}
  */
-function protoInterval( interval ){
-    return Note.interval( this, interval);
+function protoInterval(note){
+    return Note.interval( this, note);
 };
 
 /**
@@ -441,16 +449,16 @@ function protoSimpleNotation(signature){
  *
  * @returns {boolean} true if the note can be described by this name
  */
-function protoHasName( name ){
+function protoHasName(name){
      return Note.fromNotation(name) && this.relPos() == Note.fromNotation(name).relPos();
 }
 
 /**
  * the octave the note is in
  *
- * @returns {integer} the octave
+ * @returns {int} the octave
  */
-function protoOctave( ){
+function protoOctave(){
     return Math.floor(this.pos/12);
 }
 
@@ -459,8 +467,18 @@ function protoOctave( ){
  *
  * @returns {Note} a new relative Note object
  */
-function protoToRelative( ){
-    return new Note(this.pos - this.octave()*12);
+function protoToRelative(){
+    return new Note(this.pos - this.octave()*12, true, this.acc);
+}
+
+/**
+ * return an absolute version of this note, in the specific octave (default = 0)
+ * if the note is already absolute (not relative), transpose it to the specified octave
+ * @returns {Note}
+ */
+function protoToAbsolute(octave){
+    var o = octave || 0;
+    return new Note(this.relPos() + o * 12, false, this.acc);
 }
 
 /**
@@ -478,7 +496,7 @@ function protoRelPos(){
  *
  * @returns {Note} A new Note object
  */
-function protoTranspose( interval ){
+function protoTranspose(interval){
      return Note.transpose( this, interval );
 }
 
@@ -498,10 +516,12 @@ function protoType(){
  *
  * possible optimization: lookup table
  *
+ * A4 should be 440Hz
+ *
  * @returns {Number} the frequency of the note in Hz
  */
 function protoFrequency(){
-    return 440 * Math.pow(2, (this.pos-69)/12 );
+    return 440 * Math.pow(2, (this.pos-57)/12 );
 }
 
 /**
@@ -511,21 +531,21 @@ function protoFrequency(){
  *
  * @returns {boolean} true if the note can be parsed into a Note object
  */
-function isValidNote( notation ){
-    return parseNoteNotation( notation ) ? true : false;
+function isValidNote(notation){
+    return parseNoteNotation(notation) ? true : false;
 
 }
 
-function parseNoteNotation( notation ){
-    if( !notation ) return;
+function parseNoteNotation (notation) {
+    if (!notation) return;
 
-    var regex = new RegExp("^" + MUSIQ.NOTE_REGEX + "?$","m");
-    var matches = regex.exec( notation );
-    if(!matches) return;
+    var regex = new RegExp("^" + MUSIQ.NOTE_REGEX + "?$", "m");
+    var matches = regex.exec(notation);
+    if (!matches) return;
 
     return {
-        note : matches[1],
-        acc : matches[2],
+        note   : matches[1],
+        acc    : matches[2],
         octave : matches[3]
     };
 }
@@ -540,7 +560,7 @@ function parseNoteNotation( notation ){
  * @todo: implement this function
  *
  */
-function isValidNoteList( list ){
+function isValidNoteList (list) {
     throw new Error('not implemented');
     // split the list
     return false;

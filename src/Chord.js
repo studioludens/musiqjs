@@ -1,15 +1,17 @@
 'use strict';
 
-var _     = require('lodash'),
-    MUSIQ = require('./base'),
-    Note  = require('./Note'),
-    Scale = require('./Scale'),
+var _        = require('lodash'),
+    MUSIQ    = require('./base'),
+    Note     = require('./Note'),
+    Scale    = require('./Scale'),
     Interval = require('./Interval');
 
 module.exports = Chord;
 
 Chord.fromNotation              = fromNotation;
 Chord.fromNotes                 = fromNotes;
+Chord.fromObject                = fromObject;
+Chord.fromJSON                  = fromJSON;
 Chord.contains                  = contains;
 Chord.isValidChord              = isValidChord;
 Chord.isValidChordList          = isValidChordList;
@@ -37,7 +39,7 @@ Chord.prototype.contains        = protoContains;
  *                   on the musical scale (Fretboard for guitar)
  * @param {string} [type=chord] - the type of chord,
  */
-function Chord( notes, descriptor, tonic, relative, type ) {
+function Chord(notes, descriptor, tonic, relative, type) {
 
     this.descriptor = descriptor;
     this.notes = notes;
@@ -50,7 +52,7 @@ function Chord( notes, descriptor, tonic, relative, type ) {
     this.relative = (tonic ? tonic.relative : false) || relative || false;
 
     // this should be a Note object
-    this.tonic = tonic || new Note(0);
+    this.tonic = tonic || new Note(notes[0]);
 
     this.type = type || "chord";
 };
@@ -62,15 +64,13 @@ function Chord( notes, descriptor, tonic, relative, type ) {
  *
  * @returns {Chord}
  */
-function fromNotation( name, type ){
+function fromNotation(name, type){
 
     // check if it's a valid notation, at least the note part
-    var parsedNotation;
-
-    // the array used to look up chords
-    var lookup;
-
-    var chordType = "";
+    var parsedNotation,
+        // the array used to look up chords
+        lookup,
+        chordType = "";
 
     // TODO: this is a bit weird
     if( type === 'scale'){
@@ -151,7 +151,7 @@ function fromNotation( name, type ){
  *
  * @returns {Chord} a matching chord, null when nothing is found
  */
-function fromNotes( notes, inversion ){
+function fromNotes(notes, inversion){
 
     var matches = Chords.fromNotes( notes, inversion );
     if( matches && matches.length > 0 ){
@@ -159,6 +159,14 @@ function fromNotes( notes, inversion ){
     }
     return null;
 };
+
+function fromJSON(json){
+    throw new Error('not implemented!');
+}
+
+function fromObject(o) {
+    throw new Error('not implemented!');
+}
 
 /**
  * check if this chord contains a certain note
@@ -194,7 +202,7 @@ function contains(chord, note){
  */
 function notation( signature ) {
     if( this.abstr ){
-        return this.descriptor.names[0].replace("b","♭").replace("#","♯");;
+        return this.descriptor.names[0].replace("b","♭").replace("#","♯");
     } else {
         return this.tonic.simpleNotation( signature ) + this.descriptor.names[0].replace("b","♭").replace("#","♯");;
     }
@@ -257,12 +265,12 @@ function noteObjects(){
     // just return the simple list of notes
     //if( this._notes ) return this._notes;
 
-    return this.descriptor.relNotes.map( toNote, this );
+    return this.notes.map( toNote, this );
 
     function toNote(note){
         //console.log(this.tonic.pos+note);
-        return new Note(this.tonic.pos + note);
-    }
+        return new Note(note);
+    };
 }
 
 /**
@@ -321,7 +329,7 @@ function toString(){
 
 /**
  * the minimal notes needed to form this chord
- * @returns {array}   the notes that are minimally necessary
+ * @returns {Array}   the notes that are minimally necessary
  *                    to form this chord (without optional notes)
  *
  *
@@ -339,7 +347,7 @@ function minNotes(){
  * @param {Note} note - a Note object
  * @returns {boolean} true if the chord contains the note
  */
-function protoContains( note ){
+function protoContains(note){
     return Chord.contains( this, note );
 }
 
@@ -357,11 +365,11 @@ function protoContains( note ){
  *              2 : any specified accidentals
  *              3 : chord indicator / name
  */
-function isValidChord( notation ){
-    return parseChordNotation ? true : false;
+function isValidChord(notation){
+    return parseChordNotation(notation) ? true : false;
 }
 
-function parseChordNotation( notation ){
+function parseChordNotation(notation){
     if( !notation) return false;
 
     // default to major
@@ -380,9 +388,9 @@ function parseChordNotation( notation ){
     if(!matches) return;
 
     return {
-        note : matches[1],
-        acc : matches[2],
-        notation: matches[3]
+        note     : matches[1],
+        acc      : matches[2],
+        notation : matches[3]
     };
 }
 
@@ -392,7 +400,7 @@ function parseChordNotation( notation ){
  *
  * @todo - implement function
  */
-function isValidChordList( list ){
+function isValidChordList(list){
     throw new Error('not implemented');
     // check if the chord name is valid
     return false;
